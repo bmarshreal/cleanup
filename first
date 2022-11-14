@@ -1,0 +1,58 @@
+import pyautogui as pag
+import time
+import sys
+
+#***requires pip install opencv_python***#
+
+
+queryList = []
+
+def searchFunc(arg):
+    pag.press('win')
+    time.sleep(1)
+    pag.write(arg)
+    time.sleep(0.5)
+
+def launchFileExplorer():
+    pag.hotkey("win","E")
+
+def enableRemoteDesktopSettings():
+    pag.write('''reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+''')
+
+def cmdAdmin():
+    searchFunc("cmd")
+    pag.hotkey("ctrl","shift","enter")
+    pag.locateOnScreen('C:/Users/Blake/Desktop/bttn.png')
+    pag.press("left")
+    pag.press("enter")
+    
+
+def setTimeDate():
+    time.sleep(0.5)
+    cmdAdmin()
+    pag.hotkey("win","up")
+    time.sleep(0.5)
+    pag.write('tzutil /s "Central Standard Time"')
+    time.sleep(1)
+    pag.press("enter")
+
+def setRemoteDesktopSettings():
+    cmdAdmin()
+    enableRemoteDesktopSettings()
+
+def disableUAC():
+    searchFunc("UAC")
+    pag.press("enter")
+    time.sleep(0.5)
+   
+    uac = pag.locateOnScreen('C:\\Users\\Blake\\Desktop\\uac.png', grayscale=True,confidence=.5)
+    
+
+    time.sleep(1)
+    print(uac)
+    pag.click()
+disableUAC()
+
+#List of possible searches: OS, cmd, date and time settings, notifications and settings, check for updates
+#List of dicoverable terms: OS Version = qualification version, 
