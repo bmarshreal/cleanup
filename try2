@@ -5,9 +5,17 @@ import subprocess
 
 #***requires pip install opencv_python***#
 
-#****POWERSHELL COMMANDS****
-# | Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
-# |
+#****USEFUL POWERSHELL COMMANDS****#
+
+#*Change User Account Control Settings to Min* --> *Run Prog* --> *UAC Back To Default Level*#
+
+# |command to restart computer: Restart-Computer
+# |command to restart multiple computers: Restart-Computer -ComputerName SHELL-PC01, SHELL-PC02, localhost
+# |command to run powershell as admin: runas /netonly /user:RemoteDomain\Administrator powershell
+# |command to disable remote desktop: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 1
+# |command to disable remote desktop through firewall: Disable-NetFirewallRule -DisplayGroup "Remote Desktop"
+# |command to enable remote desktop: Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
+# |command to enable remote desktop through firewall: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 # |
 # |
 # |
