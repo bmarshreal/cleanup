@@ -1,0 +1,52 @@
+https://www.ipswitch.com/blog/how-to-change-registry-permissions-with-powershell
+
+Finding Existing Registry Key Permissions: --> 
+
+PS> $acl = Get-Acl 'HKCU:\AppEvents\EventLabels\ActivatingDocument'
+PS> $acl.Access
+
+Output:
+
+RegistryRights    : ReadKey
+AccessControlType : Allow
+IdentityReference : APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES
+IsInherited       : False
+InheritanceFlags  : ContainerInherit
+PropagationFlags  : None
+
+Creating the RegistryAccessRule Object: -->
+
+$idRef = [System.Security.Principal.NTAccount]("HOSTNAME\username")
+$regRights = [System.Security.AccessControl.RegistryRights]::FullControl
+$inhFlags = [System.Security.AccessControl.InheritanceFlags]::None(can be set to None, ContainerInherit or ObjectInherit)
+$prFlags = [System.Security.AccessControl.PropagationFlags]::None(can be set to None, ContainerInherit or ObjectInherit)
+$acType = [System.Security.AccessControl.AccessControlType]::Allow
+
+Finally, create the RegistryAccessRule object using all of the objects you’ve just collected.: -->
+
+$rule = New-Object System.Security.AccessControl.RegistryAccessRule ($idRef, $regRights, $inhFlags, $prFlags, $acType)
+
+***
+Adding the ACL (recommended):-->
+
+PS> $acl.AddAccessRule($rule)
+
+or...... Overwrite existing ACL:-->
+
+PS> $acl.SetAccessRule($rule)
+***
+
+Assigning the ACL:-->
+
+$acl | Set-Acl -Path 'HKCU:\AppEvents\EventLabels\ActivatingDocument'
+
+Check if Access has changed for the registry key: -->
+
+PS> (Get-Acl 'HKCU:\AppEvents\EventLabels\ActivatingDocument').Access
+
+RegistryRights    : FullControl
+AccessControlType : Allow
+IdentityReference : <hostname>\Administrator
+IsInherited       : False
+InheritanceFlags  : None
+PropagationFlags  : None
