@@ -1,1 +1,32 @@
-user: S-1-5-32-577
+HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server
+
+NOTE: Replace ("desktop-cs7sm31\blake_marshall") with current active admin username. This can be found by opening cmd/powershell and 
+typing in the command: whoami
+
+____________________________________________________________________________
+
+$acl = Get-Acl 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server'
+
+$idRef = [System.Security.Principal.NTAccount]("desktop-cs7sm31\blake_marshall")
+
+$regRights = [System.Security.AccessControl.RegistryRights]::FullControl
+
+$inhFlags = [System.Security.AccessControl.InheritanceFlags]::None
+$prFlags = [System.Security.AccessControl.PropagationFlags]::None
+
+$acType = [System.Security.AccessControl.AccessControlType]::Allow
+
+$acl.AddAccessRule($rule)
+
+$rule = New-Object System.Security.AccessControl.RegistryAccessRule ($idRef, $regRights, $inhFlags, $prFlags, $acType)
+
+$acl.AddAccessRule($rule)
+
+$acl | Set-Acl -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server'
+
+______________________________________________________________________________________
+
+(Get-Acl 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server').Access
+
+**************************************************************************************
+Desired Command: Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0
