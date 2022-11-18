@@ -2,58 +2,19 @@ import pyautogui as pag
 import time
 import sys
 import subprocess
+import pywinauto as pwa
 
-# # Get the ID and security principal of the current user account
-#  $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
-#  $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
-#   
-#  # Get the security principal for the Administrator role
-#  $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
-#   
-#  # Check to see if we are currently running "as Administrator"
-#  if ($myWindowsPrincipal.IsInRole($adminRole))
-#     {
-#     # We are running "as Administrator" - so change the title and background color to indicate this
-#     $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
-#     $Host.UI.RawUI.BackgroundColor = "DarkBlue"
-#     clear-host
-#     }
-#  else
-#     {
-#     # We are not running "as Administrator" - so relaunch as administrator
-    
-#     # Create a new process object that starts PowerShell
-#     $newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
-    
-#     # Specify the current script path and name as a parameter
-#     $newProcess.Arguments = $myInvocation.MyCommand.Definition;
-    
-#     # Indicate that the process should be elevated
-#     $newProcess.Verb = "runas";
-    
-#     # Start the new process
-#     [System.Diagnostics.Process]::Start($newProcess);
-    
-#     # Exit from the current, unelevated, process
-#     exit
-#     }
-#   
-#  # Run your code that needs to be elevated here
-#  Write-Host -NoNewLine "Press any key to continue..."
-#  $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-# #***requires pip install opencv_python***#
 
-# #****USEFUL POWERSHELL COMMANDS****#
-
-# #*Change User Account Control Settings to Min* --> *Run Prog* --> *UAC Back To Default Level*#
+#**************************************************Useful Commands**********************************************************#
 
 # # |command to restart computer: Restart-Computer
 # # |command to restart multiple computers: Restart-Computer -ComputerName SHELL-PC01, SHELL-PC02, localhost
 # # |command to run powershell as admin: runas /netonly /user:RemoteDomain\Administrator powershell
 # # |command to disable remote desktop: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 1
 # # |command to disable remote desktop through firewall: Disable-NetFirewallRule -DisplayGroup "Remote Desktop"
-# # |command to enable remote desktop: Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
 # # |command to enable remote desktop through firewall: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+# # |command to set UAC level 0-1 (min-MAX): Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
+# # |
 # # |
 # # |
 # # |
@@ -64,86 +25,75 @@ import subprocess
 # # |
 # # |
 
+#***********************************Working  Functions ***************************************#
+queryList = []
 
-# queryList = []
+def searchFunc(arg):
+    pag.press('win')
+    time.sleep(1)
+    pag.write(arg)
+    time.sleep(0.5)
 
-# def searchFunc(arg):
-#     pag.press('win')
-#     time.sleep(1)
-#     pag.write(arg)
-#     time.sleep(0.5)
+def launchFileExplorer():
+    pag.hotkey("win","E")
 
-# def launchFileExplorer():
-#     pag.hotkey("win","E")
-
-def enableRemoteDesktopSettings():
-    #Enable RDP : 1 = Disable ; 0 = Enable
-    pag.write('''Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0''')
+def setTimeDate():
+    time.sleep(0.5)
+    pag.write('tzutil /s "Central Standard Time"')
+    time.sleep(1)
     pag.press("enter")
 
-# def cmdAdmin():
-#     searchFunc("cmd")
-#     pag.hotkey("ctrl","shift","enter")
-#     pag.locateOnScreen('C:/Users/Blake/Desktop/bttn.png')
-#     pag.press("left")
-#     pag.press("enter")
-    
+#**********************************Functions in Testing***************************************#
 
-# def setTimeDate():
-#     time.sleep(0.5)
-#     cmdAdmin()
-#     pag.hotkey("win","up")
-#     time.sleep(0.5)
-#     pag.write('tzutil /s "Central Standard Time"')
-#     time.sleep(1)
-#     pag.press("enter")
-
-# def setRemoteDesktopSettings():
-#     cmdAdmin()
-#     enableRemoteDesktopSettings()
-
-# def disableUAC():
-#     searchFunc("UAC")
-#     pag.press("enter")
-#     time.sleep(0.5)
-#     uac = pag.locateOnScreen('C:\\Users\\Blake\\Desktop\\uac.png', grayscale=True,confidence=.5)
-#     time.sleep(1)
-#     print(uac)
-#     pag.click()
-
-# # def uacBypass():
-
-# #     subprocess.call('powershell -command " New-Item -Path HKCU:\Software\Classes\ms-settings\shell\open\command -Value cmd.exe -Force"', shell=True) 
-# #     subprocess.call('powershell -command "New-ItemProperty -Path HKCU:\Software\Classes\ms-settings\shell\open\command -Name DelegateExecute -PropertyType String -Force"', shell=True)
-# #     subprocess.call('powershell -command "Cmd = fodhelper "', shell=True)
-# #     subprocess.call('powershell -command "Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0 -Force"',shell=True)
-# #     setRemoteDesktopSettings()
-# #     # subprocess.call('powershell -command "Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0"', shell=True)
-        
-# # uacBypass2()
-
-# # def uacBypass():
-
-# #     subprocess.call('powershell -command "if((([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")) {Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0 -Force} else { $registryPath = "HKCU:\Environment"$Name = "windir"$Value = "powershell -ep bypass -w h $PSCommandPath;#"Set-ItemProperty -Path $registryPath -Name $name -Value $Value schtasks /run /tn \Microsoft\Windows\DiskCleanup\SilentCleanup /I | Out-Null Remove-ItemProperty -Path $registryPath -Name $name}"')
-
-# # uacBypass2()
-
-
-# # p = subprocess.Popen(["powershell.exe", 
-# #               "C:\\Users\\USER\\Desktop\\helloworld.ps1"], 
-# #               stdout=sys.stdout)
-# # p.communicate()
-
-def uacBypass3():
-
-    subprocess.Popen(["powershell.exe"] + ["runas /netonly /user:RemoteDomain\Administrator powershell"] + ['Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0'])
-    pag.press("enteradmin")
+def adminRights():
+# + ['Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0']
+    # subprocess.Popen(["powershell.exe"] + ["runas /netonly /user:RemoteDomain\Administrator powershell"])
+    subprocess.call('powershell -command "Start powershell.exe -verb runas"')
+    pag.press("enter")
     pag.write("admin")
     pag.press("enter")
-    pag.hotkey("ctrl","up")
+    time.sleep(1)
+    pag.press("enter")
+    
     # enableRemoteDesktopSettings()
 
-uacBypass3()
+
+
+def regEdit():
+    
+    
+    time.sleep(1)
+    
+    pag.write("""
+        
+    $acl = Get-Acl 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server'\n
+    $idRef = [System.Security.Principal.NTAccount]("desktop-iostm6o\blake")\n
+    $regRights = [System.Security.AccessControl.RegistryRights]::FullControl\n
+    $inhFlags = [System.Security.AccessControl.InheritanceFlags]::None\n
+    $prFlags = [System.Security.AccessControl.PropagationFlags]::None\n
+    $acType = [System.Security.AccessControl.AccessControlType]::Allow\n
+    $acl.AddAccessRule($rule)\n
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule($idRef, $regRights, $inhFlags, $prFlags, $acType)\n
+    $acl.AddAccessRule($rule)\n
+    $acl | Set-Acl -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server')""")
+
+
+
+def enableRemoteDesktopSettings():
+    #Enable RDP (Remote Desktop Protocol): 1 = Disable ; 0 = Enable
+    pag.write('''Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0''')
+    pag.press("enter")
+  
+
+
+adminRights()
+time.sleep(2)
+regEdit()
+app = pwa.application(backend="uia").PowerShell
+appSpec = app.window(title='Administrator: Windows PowerShell')
+appSpec.maximize()
+
+
 
 
 
