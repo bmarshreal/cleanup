@@ -1,0 +1,333 @@
+1	Complete	Reviewed	Add the SA# to a row on the Acronis License list.
+If there are fewer than 25 licenses available, contact IT management to order more.	 
+2	Complete	Reviewed	If pre-loaded from vendor, create an out of box image and virus scan. Do NOT add out of box images to the network.
+Verify with Validation Analyst that a full sanitize can be performed. If not, find out what is allowed.
+Creating an Image with Acronis
+How to do a virus scan
+ 
+3	Complete	Reviewed	
+Check the ISO Library \\labs\madison\ISOLib for a copy of the application installation files for the current version
+
+If it does not exist, create a new folder and add a copy of the installation files or an ISO of the installation media
+
+ 
+4	Complete	Reviewed	When ready to start work, navigate to the appropriate SA###Notes page and edit the table at the top to indicate who is performing the work. Then edit the main checklist table while performing the sanitize to be able to check steps Complete as you perform them.	 
+5	Complete	Reviewed	Print out a label with "SA###" and "INST-##", replaced with the appropriate SA number and instrument identifier, and affix it to the front of the SA	 
+6	N/A	 	If the SA was not vendor-provided, update the row that corresponds to its serial number on the Computer Inventory List	This computer was purchased for this project
+7	Complete	Reviewed	
+Prepare the PC for sanitization (this step is for PCs fresh out of the box)
+
+Plug in power, keyboard, mouse, and monitor, but DO NOT plug the PC into the network.
+Turn on the computer.
+Set language, country, and keyboard layout to US English.
+For second keyboard layout, select No.
+The computer will attempt to connect to the internet, select "I don't have internet". Confirm this answer again.
+For the initial user, set the name to "user1" and set the password to the generic admin password.
+Pick random security questions and answers. The answers are not important as they will never be used.
+At the prompt "Do more across devices with activity history?", select No.
+At the prompt "Do more with digital assistant?", select Decline.
+Change all privacy settings to No and click Accept (Deactivate all privacy settings).
+When asked if you want to protect your device, select Skip.
+ 
+8	Complete	Reviewed	
+Confirm OS is correct and activate Windows (ask Validation Analyst what OS they are expecting)
+
+To check current OS version, perform a Windows search for "System" and verify the OS version matches what is required for qualification. Check this before doing the license activation just in case it requires a different OS besides Windows 10 Enterprise
+The OS we will need for most systems is Windows 10 Enterprise. Some computers may use Enterprise LTSB, but most will use normal Enterprise. We rarely use Pro but there are some exceptions. We will never use Home Edition.
+To activate Windows:
+
+Search for the Run application. Type in "slui 3" and press Enter. At the pop-up asking if you want to Allow Windows Activation, select "Yes"
+You will be asked to enter a product key for Windows 10 Enterprise. This can be found in the Security folder in Word document "Windows 10 Enterprise Keys.docx". You can use either of the first two keys for Windows 10 Enterprise, or either of the second two keys if you need the LTSB option (less common)
+Click Activate after entering the key. You will get an error message about not being able to connect to the internet. Click Close
+Search for the Run application again. Type in "slui 4" and press Enter. You will get a window with a series of numbers and a toll-free number to call to activate Windows
+Call the phone number and navigate through the automated menu. If done correctly, the automated menu will end by saying that it will send a text message to your smart phone to complete the activation. It will then send you text message with a link to microsoft.gointeract.io to complete the activation. This text message is the only way to access the site, to avoid having to call in the future you should hang onto this text message.
+The site will have a menu for 6 digits or 7 digits, referring to how many digits are in each set on your screen. This should be 7 digits, so select that option. On the next screen, enter in all the digits displayed on the computer screen. Press Submit on your phone and click Enter Confirmation ID on the computer. After submitting, the site will give you another long series of digits to enter back into the computer. Enter these into the computer and click Ok to finish activating Windows.
+ 
+9	Complete	Reviewed	
+Set the timezone to the correct one
+
+Click the clock in the bottom right corner of the screen and select "Date and Time Settings"
+Use the dropdown to set the time zone
+It's possible you may not be able to use this GUI method to set the timezone. If that happens, you may go to the command prompt and type "tzutil /s "Central Standard Time"" and press Enter. Confirm the time on the SA updates to current time
+
+ 
+10	Complete	Reviewed	
+Rename the PC and add it to the domain
+
+Plug the computer into the instrument subnet
+Open File Explorer, right-click on This PC, and select Properties. Under the "Computer name, domain, and workgroup settings" section, click Change Settings
+In the System Properties dialogue box, click the Change button at the bottom
+Enter the name of the computer (SA###) in the Computer Name/Domain Changes dialogue box. Select the Domain radio button and type in "labs.ppdi.local". Click Accept
+Enter AI credentials when prompted
+Do not restart when prompted, perform the next step prior to restarting
+Verify the computer object in Active Directory has the proper location set.
+ 
+11	Complete	Reviewed	
+Turn on Remote Access
+
+Open File Explorer and right-click on This PC. Select Properties, then Remote Settings in the left-hand menu
+Select "Allow remote connections to this computer"
+Ensure that the box for "Allow connections only from computers running Remote Desktop with Network Level Authentication (recommended)" is checked
+Restart the computer
+ 
+12	Complete	Reviewed	When the computer restarts, remote to it from your laptop as your AI	 
+13	Complete	Reviewed	
+Modify Users and Groups
+
+Go to File Explorer, right-click This PC, then click Manage. Go to Local Users and Groups > Users and rename the built-in Administrator account to "labadmin" and set the standard password. The password should not expire.
+Ensure all other accounts besides labadmin are disabled
+In "Groups", add "PA Validation-Team" to "Remote Desktop Users"
+ 
+14	Complete	Reviewed	Search for "cmd" to bring up the command line. Type "gpupdate /force" and press Enter. This command forces an update to group policy. After it's done running, the command window will ask if you want to log off. Enter "y" for Yes. Remote back in with your AI account.	 
+15	Complete	Reviewed	
+Confirm gpupdate was successful by verifying the following registry key settings:
+
+Run regedit and confirm that the following registry keys registry key contains the following:
+HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate
+"TargetGroupEnabled"=dword:00000001
+"ElevateNonAdmins"=dword:00000000
+"WUServer"="http://madintsus001:8530"
+"WUStatusServer"="http://madintsus001:8530"
+"TargetGroup"="Pre-Deployment SAs"
+HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU
+"NoAutoUpdate"=dword:00000000
+"UseWUServer"=dword:00000001
+"NoAUShutdownOption"=dword:00000001
+"AUOptions"=dword:00000002
+"ScheduledInstallDay"=dword:00000000
+"ScheduledInstallTime"=dword:00000003
+If this isn't populated, run "gpupdate /force" again.
+In powershell, type in "usoclient startscan" and press Enter. This command forces the computer to look for and download all new updates available from the WSUS server.
+ 
+16	Complete	Reviewed	
+Remove unnecessary software
+
+Go to Settings > Apps & Features. Uninstall unnecessary programs and components, like
+OneDrive?
+Windows Media Player
+CutePDF?
+Other Windows/Lenovo programs that are not needed.
+Leave any vendor programs and anything you're unsure about. Error on the side of caution. If you're not sure, ask someone else.	 
+17	Complete	Reviewed	
+Install Radmin
+
+Navigate to \\labs\Madison\AdminInstalls\Radmin and double-click on the Radmin_Server installer to install the latest version of Radmin.
+Accept the defaults in the install wizard.
+After the wizard finishes you'll be presented with a Settings for Radmin Server dialogue box. Leave this open for the next step
+NOTE: Do not enter a license yet for Radmin. The license is entered when Radmin needs to be used.
+
+ 
+18	Complete	Reviewed	
+Add users to Radmin
+
+In the Settings for Radmin Server dialogue box, click Permissions
+Select Windows NT Security and click Permissions next to that option
+In the Permission for Radmin Server dialogue box, click Add and add the local groups "SA###\Administrators" and "SA###\Remote Desktop Users"
+ 
+19	Complete	Reviewed	
+Install Adobe DC Reader
+
+Navigate to \\labs\Madison\AdminInstalls\Adobe Reader DC\ and run the file in that folder, accepting any defaults during installation
+ 
+20	Complete	Reviewed	
+Install Microsoft Office if required. (ask validation analyst if office is needed and if so what version)
+
+Navigate to \\labs\madison\AdminInstalls\Required Office Version
+Run "setup" file
+Only install Word and Excell unless otherwise instructed by the validation analyst.
+Register office as appropriate.
+ 
+21	Complete	Reviewed	
+Steps 19 - 29 can all be performed from the Control Panel. You can perform a Windows search for Control Panel or in Windows 10 click the Windows button, open the folder that says Windows System, and click on Control Panel. In the upper right, select "Small icons" in the View By dropdown to see all necessary items.
+
+Turn off Automated Defragmentation
+
+Within Control Panel, click on Administrative Tools
+Within Administrative Tools, click on Defragment and Optimize Drives
+Click Change Settings
+Uncheck "Run on a schedule"
+NOTE: Keep on if specified by vendor. This is needed by certain vendors.
+
+ 
+22	Complete	Reviewed	
+Disable SuperFetch or SysMain service
+
+Still within Administrative Tools, click on Services, then look for SuperFetch or SysMain in Windows services (could be either)
+If found, right-click on it and select Stop
+Right-click again and select Properties. Change Startup Type to Disabled
+ 
+23	Complete	Reviewed	
+Verify that "Windows Time" Service is turned on and is running.
+
+a. go to control panel and Administrative tools
+
+b. Choose Services
+
+C. Go to Windows Time service and set to automatic and click start. (if the time is already set to manual and running it will work also.)
+
+ 
+24	Complete	Reviewed	
+Verify that the Windows Time is syncing correctly.
+
+A. Open up Command prompt by searching "CMD"
+
+B. Type in the command "w32tm /query /status"
+
+C. Verify that the source is MADDC01 or MADDC02
+
+D. Verify the last sync was todays date.
+
+ 
+25	Complete	Reviewed	
+Remove and Windows tasks that are not needed. DO NOT DELETE any unfamiliar tasks.
+
+Still within Administrative Tools, click on Task Scheduler
+Select Task Scheduler Library in the tree on the left
+Delete the Adobe Updater and any OneDrive tasks, and any other unnecessary tasks
+Close Administrative Tools and return to Control Panel
+ 
+26	Complete	Reviewed	
+Turn off Windows Firewall
+
+In Control Panel, click on Windows Defender Firewall
+Click "Turn Windows Firewall on or off" in the left menu
+Check all 3 radio buttons that say "Turn off Windows Firewall (not recommended)". This turns off the firewall at the domain, private network, and public network levels
+
+
+ 
+27	Complete	Reviewed	
+Set IE 11 as the default browser
+
+In Control Panel, click on Default Programs, then on "Set program access and computer defaults". Set Internet Explorer as the default web browser
+ 
+28	Complete	Reviewed	
+Add https://*.ppdi.local to trusted sites
+
+In Control Panel, click on Internet Options, then click on the Security tab. Click the Trusted Sites icon (green checkmark) and then click the Sites button
+Enter https://*.ppdi.local and click "Add" to add this domain to the list of trusted sites
+Uncheck "Require server verification (https:) for all sites in this zone"
+ 
+29	Complete	Reviewed	
+Make sure devices in Device Manager are functional
+
+In Control Panel, click on Device Manager. Verify none of the items have a yellow yield icon on them
+If unable to resolve, consult a senior team member
+ 
+30	Complete	Reviewed	
+Turn off power management of NICs and USB ports
+
+Still in Device Manager, expand the sections for "Network Adapters" and "Universal Serial Bus Controllers".
+For each entry in these sections, right-click and select Properties
+If there is a Power Management tab, click into the tab and uncheck the box that says "Allow the computer to turn off this Device to save power"
+Close Device Manager and return to Control Panel
+ 
+31	Complete	Reviewed	
+Verify Hibernate is turned off and computer is set to High Performance power settings
+
+Run POWERCFG /HIBERNATE OFF in elevated command prompt
+In Control Panel, click on Power Options
+Confirm the radio button for High Performance is selected under Preferred Plans
+Click "Change plan settings" next to High Performance and confirm the sleep setting says "Never"
+ 
+32	Complete	Reviewed	
+Turn Troubleshooter off
+
+In Control Panel, click on Troubleshooting > Change Settings on the left > Set to Off
+ 
+33	Complete	Reviewed	
+Turn off User Account Control Settings
+
+In Control Panel, click on User Accounts, then click Change User Account Control settings
+Turn the slider all the way down to Never Notify
+ 
+34	N/A	 	
+Disable Wi-Fi and Bluetooth (unless software requires either). Generally these features will not be built into towers anyway.
+
+In Device Manager, select Network adapters, right clickthe wireless adapter and select "Disable"
+Do the same for any Bluetooth devices.
+It's a tower
+35	Complete	Reviewed	
+Disable Notifications
+
+Perform a Windows search for "notifications and action settings"
+Toggle notifications Off and uncheck any other boxes about getting notifications and tips.
+ 
+36	Complete	Reviewed	
+Verify that the swap file is set to automatic management.
+
+In File Explorer, right-click This PC and select Properties
+Click Advanced System Settings in the left-side menu
+In the dialogue box that pops up, select Settings under Performance
+Navigate to the Advanced tab in the Performance Options dialogue box and click Change under Virtual Memory
+Verify that "Automatically manage paging file size for all drives" is selected.
+You may select not to restart at this time for changes to take effect
+ 
+37	Complete	Reviewed	
+For each hard drive, turn off the option "Allow Indexing Service to index this disk for fast file searching" (DO NOT do this to network drives)
+
+Open File Explorer. Right-click each local hard drive under This PC and select Properties
+Uncheck the box that says "Allow Indexing Service to index this disk for fast file searching"
+Click Apply
+On the box that pops up, you may leave "Apply changes to drive C:\, subfolders and files" checked and click OK
+You may get warnings about certain files and folder that you can't change this way, you may click Ignore All
+ 
+38	N/A	 	Add any recovery partitions to DDOD exemption file ( \\labs.ppdi.local\madison\IT\Instruments\DDoD\DDod-Conf-Exempt-LowSpace.txt)	there are no recovery drives.
+39	Complete	Reviewed	
+Clean up desktop, taskbar, and start menu (this is a user specific step)
+
+Desktop: Remove all icons except the Recycling Bin, Adobe Reader DC, and any vendor programs
+Taskbar: Right-click and remove/unpin everything except File Explorer and Task View
+Start Menu: Click the Windows button to open the Start menu. For each icon on the right side, right-click and select "Unpin from Start"
+ 
+40	Complete	Reviewed	
+Copy scripts
+
+Navigate to \\labs\Madison\IT\Instruments\1Instrument_Admin\7Scripts\
+Drag the PPD_Report folder to the C: drive
+Drag both "log" and "MFilesOnlineSAPrinting" to "Win7-10 All Users Startup" folder
+Drag "Install Network Printers to "Win7-10 Public Desktop" folder
+Double-click "Windows 10 Permission Fix" and click Yes at the prompt
+Double-click "MFilesOnlineSAPrinting" and install the driver when prompted
+ 
+41	Complete	Reviewed	At the command prompt, type "msfeedssync disable" and press Enter	 
+42	Complete	Reviewed	
+Use Driver Doubler to get a copy of all unique drivers on the system and save it to \\labs\madison\IT\Instruments\1Instrument_Admin\3Drivers\ (generally only for vendor PCs or newer IT computers)
+
+Get one of the app admin hard drives commonly used for disk images
+Plug it into a USB port on the computer
+On the hard drive, navigate to the folder 2010 Double Driver
+Run the program dd.exe
+In the top menu, click Backup
+Click Scan Current System
+The program will scan for all available drivers on the system.
+It's usually fine to accept the defaults of drivers to save. You definitely want to check all drivers that look like they could be specific to the vendor or instrument, and you can generally skip backing up 3rd-party drivers like Microsoft or Intel.
+Once all the drivers you want to back up have a checkmark next to them, click Backup Now and save it \\labs\madison\IT\Instruments\1Instrument_Admin\3Drivers\. Specify the output to be saved as a Structured folder.
+ 
+43	Complete	Reviewed	
+Add the system to CyberArk with "pre-deployment" in the address
+
+Adding a PC's local admin credentials instructions can be found here
+Leave the account as "Unmanaged" to start
+ 
+44	Complete	Reviewed	Restart the computer for latest changes to take effect	 
+45	Complete	Reviewed	
+24 HOURS LATER - Checking for updates
+
+Perform a Windows search for "Check for updates". Apply updates until computer says it's up to date.
+If the PC is having trouble checking for updates, you can force a new scan to WSUS with the powershell command "usoclient startscan"
+ 
+46	Complete	Reviewed	Move SA into proper OU in Active Directory (Sites > Madison cGMP > Instruments > Windows 10)	 
+47	Complete	Reviewed	From cmd line, run "gpupdate /force". Reboot the PC and log back in.	 
+48	Complete	Reviewed	
+Verify Automatic updates are off
+
+Perform a Windows search for "Check for updates". Confirm you see a sentence that says "Your organization has turned off automatic updates"
+ 
+49	Complete	Reviewed	
+Add action item to the SharePoint Action Items page for the review to be done.
+
+Assign an approved reviewer to the action item.
+
+Do not continue with any other work UNTIL the review is signed off to 100% and marked complete.
+
+ 
