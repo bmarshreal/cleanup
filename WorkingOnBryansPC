@@ -73,11 +73,22 @@ queryList = []
 def cmdAdmin():
     time.sleep(0.5)
     pag.hotkey("win","r")
+    pag.write("cmd")
+    pag.hotkey("ctrl","shift","enter")
+    time.sleep(2)
+    pag.write("admin1!")
+    pag.press("enter")
+
+    
+def cmdAdminFromCMD():
+    #runas /user:<localmachinename>\administrator cmd
+    time.sleep(0.5)
+    pag.hotkey("win","r")
     pag.press("enter")
     pag.hotkey("ctrl","shift","enter")
+    time.sleep(2)
     pag.write("admin1!")
-    
-
+    pag.press("enter")
 
 def searchFunc(arg):
     time.sleep(0.5)
