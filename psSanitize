@@ -158,7 +158,7 @@ function Get-PnpErrors($arg){
 
 try{
 
-#29
+#29 currently working on this....
 
     foreach($item in Get-PnpDevice){
     
