@@ -139,12 +139,6 @@ try{
     Write-Host "Inadequate permissions to perform this action. [ --Set Trusted Sites-- ]"
 
 }
-try{
-
-    Disable-NetAdapterPowerManagement
-    Set-CimInstance -Query 'SELECT * FROM MSPower_DeviceEnable WHERE InstanceName LIKE "USB\\%"' -Namespace root/WMI -Property @{Enable = $false}
-
-}catch{Write-Host "Inadequate permissions to perform this action. [ --Unable to Disable Power Management-- ]"}
 
 function Get-PnpErrors($arg){
 
@@ -168,6 +162,17 @@ try{
 }catch{
 
     Throw "An error has occured [ --Device was found with an error status-- ]"
+
+}
+
+try{
+    #30
+    Disable-NetAdapterPowerManagement
+    Set-CimInstance -Query 'SELECT * FROM MSPower_DeviceEnable WHERE InstanceName LIKE "USB\\%"' -Namespace root/WMI -Property @{Enable = $false}
+
+}catch{
+
+    Write-Host "Inadequate permissions to perform this action. [ --Unable to Disable Power Management-- ]"
 
 }
 
