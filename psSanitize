@@ -1,0 +1,211 @@
+
+
+<#
+
+
+function RunAs-Admin($arg){
+
+    Start-Process powershell -Verb runAs
+
+}
+#>
+try{
+
+    #21
+    $defrag = schtasks /Change /DISABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag"
+    $defrag
+    
+         
+}catch{
+    #When script is validated, change Write-Host commands to Throw commands
+    Write-Host "Error... Command Failed."
+}
+
+try{
+    
+    #22
+    $stopSys = Stop-Service -Force -Name "SysMain" Set-Service -Name "SysMain" -StartupType Disabled
+    $stopSys
+    
+         
+}catch{
+    Write-Host "Error... Command Failed."
+}   
+
+try{
+    
+    #23
+    $W32TM = w32tm /query /status
+    $W32TM
+    
+         
+}catch{
+    Write-Host "Error... Command Failed."
+}
+
+
+function GET-W32TMStatus($arg){
+
+    $W32TMStat = ConvertFrom-StringData ($arg -join "`n" -replace ':', '=')
+    if($W32TMStat.Source -eq "time.windows.com,0x9"){
+    
+        return $true
+    
+    }else{
+    
+        return $false
+    
+    }
+
+}
+
+
+try{
+    #24
+    if(GET-W32TMStatus(w32tm /query /status)){
+        
+        Write-Host "W32TM Source Name Verified... Moving On... `n"
+    
+    }elseif(GET-W32TMStatus(w32tm /query /status -eq $false)){
+    
+}
+    
+    
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Source name does not match.-- ]"
+}
+
+function Sched-Cleanup($arg){
+
+    #$tasks = ConvertFrom-StringData ($arg -join "`n" -replace ':', '=')
+    foreach($name in $arg.TaskName){
+        if($name -like "One*" -or $name -like "Adobe*"){
+
+            #Unregister-ScheduledTask -TaskName $name -Confirm:$false        
+            Write-Host "The Scheduled Task..." $name "has been unregistered."
+
+        }
+    
+    }
+ }
+
+ try{
+
+    #25
+ 
+    Sched-Cleanup(Get-ScheduledTask)
+
+}catch{
+
+    Write-Host "Could not remove scheduled task."
+
+}
+
+try{
+
+    #26
+
+    Set-NetFirewallProfile -Enabled False
+
+}catch{
+
+    Write-Host "Inadequate permissions to perform this action. [ --Disable Firewall-- ]"
+
+}
+
+#>
+try{
+
+    #28
+
+    #Setting IExplorer settings
+    Write-Verbose "Now configuring IE"
+
+    #Navigate to the domains folder in the registry
+    set-location "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+    set-location ZoneMap\Domains
+
+    #Create a new folder with the website name
+    new-item https://*.ppdi.local -Force #website part without https
+    set-location https://*.ppdi.local
+    new-itemproperty . -Name https -Value 2 -Type DWORD -Force
+
+    Write-Host "Site added Successfully"
+    Start-Sleep -s 2
+
+}catch{
+
+    Write-Host "Inadequate permissions to perform this action. [ --Set Trusted Sites-- ]"
+
+}
+try{
+
+    Disable-NetAdapterPowerManagement
+    Set-CimInstance -Query 'SELECT * FROM MSPower_DeviceEnable WHERE InstanceName LIKE "USB\\%"' -Namespace root/WMI -Property @{Enable = $false}
+
+}catch{Write-Host "Inadequate permissions to perform this action. [ --Unable to Disable Power Management-- ]"}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+try{}catch{Write-Host ""}
+
+
+
+<#
+
+try{
+    #10
+    $Username = Read-Host -Prompt "Please enter your username."
+    $Password = Read-Host -Prompt "Please enter your password." | ConvertTo-SecureString -AsPlainText -Force
+    $CurrentPCName = Read-Host -Prompt "Please enter your computers CURRENT name."
+    $NewPCName = Read-Host -Prompt "Please enter your computers NEW name."
+    $Domain = Read-Host -Prompt "Please enter your required domain."
+    $Creds = New-Object System.Management.Automation.PSCredential($Username ,$Password)
+
+
+    Rename-Computer -NewName $NewPCName -ComputerName $CurrentPCName -Restart -DomainCredential $Creds
+    
+         
+}catch{
+    
+    Throw "A fatal error has occurred.[ --Invalid Credentials or Computer Name/Domain.-- ]"
+}
+
+try{
+    #11
+    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0
+    
+         
+}catch{
+
+    Throw "Error... Command Failed."
+}
+#>
+Write-host "TEST"
+
+#if((Get-ScheduledTask -TaskName -like "o")){Write-Host Get-ScheduledTask -TaskName}
