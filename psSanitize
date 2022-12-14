@@ -145,6 +145,46 @@ try{
     Set-CimInstance -Query 'SELECT * FROM MSPower_DeviceEnable WHERE InstanceName LIKE "USB\\%"' -Namespace root/WMI -Property @{Enable = $false}
 
 }catch{Write-Host "Inadequate permissions to perform this action. [ --Unable to Disable Power Management-- ]"}
+
+function Get-PnpErrors($arg){
+
+    if($arg.Name -eq "Error"){
+        return $false
+    }else{
+        return $true
+    }
+
+}
+
+try{
+
+#29
+
+    foreach($item in Get-PnpDevice){
+    
+        Get-PnpErrors($item) 
+
+    }
+}catch{
+
+    Throw "An error has occured [ --Device was found with an error status-- ]"
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 try{}catch{Write-Host ""}
 try{}catch{Write-Host ""}
 try{}catch{Write-Host ""}
