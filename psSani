@@ -176,6 +176,55 @@ try{
 
 }
 
+try{
+
+    #31
+    POWERCFG /HIBERNATE OFF
+    POWERCFG -duplicatescheme 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+
+}catch{
+
+    Write-Host "Inadequate permissions to perform this action. [ --Unable to either turn Hibernate mode off or high performance mode on-- ]"
+    
+}
+
+
+try{
+    #33, Must be run in admin shell
+
+    C:\Windows\System32\cmd.exe /k %windir%\System32\reg.exe ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f
+
+}catch{
+
+    Write-Host "Inadequate permissions to perform this action.[ --Unable to turn off UAC-- ]"
+    
+}
+
+try{
+    #36
+
+    $pageFile = Get-WmiObject Win32_ComputerSystem -EnableAllPrivileges
+    $pageFile.AutomaticManagedPagefile = $true #SET TO $FALSE TO DISABLE automatic swap file management
+    $pageFile.put() | Out-Null
+    
+}catch{
+
+    Write-Host "Inadequate permissions to perform this action.[ --Unable to enable automatic swap file management-- ]"
+   
+}
+
+try{
+    #37
+
+    $disableIndex = Get-WmiObject -Class Win32_Volume -Filter "DriveLetter='C:'"
+    $disableIndex.IndexingEnabled = $false
+    $disableIndex.Put()
+    
+}catch{
+
+    Write-Host "Inadequate permissions to perform this action.[ --Disable automatic indexing of hard drive letter C:-- ]"
+  
+}
 
 
 
@@ -186,14 +235,6 @@ try{
 
 
 
-
-
-
-
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
 try{}catch{Write-Host ""}
 try{}catch{Write-Host ""}
 try{}catch{Write-Host ""}
