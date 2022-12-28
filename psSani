@@ -1,3 +1,5 @@
+#**************Script must be run from an Administrator account in an Administrator Shell**************#
+
 $allGroups = Get-LocalGroup #Gets all groups 
 $admins = Get-LocalGroupMember -Group 'Administrators' #Gets all members of the 'Administrators' Group
 $currentDomainandUser = "$($env:UserDomain)\$($env:UserName)" #Gets current user Domain and Username
