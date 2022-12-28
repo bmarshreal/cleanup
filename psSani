@@ -1,14 +1,28 @@
+$allGroups = Get-LocalGroup #Gets all groups 
+$admins = Get-LocalGroupMember -Group 'Administrators' #Gets all members of the 'Administrators' Group
+$currentDomainandUser = "$($env:UserDomain)\$($env:UserName)" #Gets current user Domain and Username
 
 
-<#
+try{
+    
+     if($currentDomainandUser -in $admins.Name){
+    
+        Write-Host 'This user is a CONFIRMED member of the Administrators group.'
+    }else{
+    
+        Throw #This 'Throw' allows a break from the if statement into the catch 'Throw' to exit the program.
+       
+    }
 
 
-function RunAs-Admin($arg){
-
-    Start-Process powershell -Verb runAs
-
+}catch{
+    
+        Throw 'Could NOT confirm that this user is a member of the Administrators group. Exiting program now...' 
+         
 }
-#>
+
+
+
 try{
 
     #21
