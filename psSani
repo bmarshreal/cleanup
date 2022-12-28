@@ -32,7 +32,7 @@ try{
          
 }catch{
     #When script is validated, change Write-Host commands to Throw commands
-    Write-Host "Error... Command Failed."
+    Write-Host "A fatal error has occurred.[ --.-- ]"
 }
 
 try{
@@ -43,7 +43,7 @@ try{
     
          
 }catch{
-    Write-Host "Error... Command Failed."
+    Write-Host "A fatal error has occurred.[ --.-- ]"
 }   
 
 try{
@@ -54,7 +54,7 @@ try{
     
          
 }catch{
-    Write-Host "Error... Command Failed."
+    Write-Host "A fatal error has occurred.[ --.-- ]"
 }
 
 
@@ -249,30 +249,30 @@ try{
 
 
 
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
-try{}catch{Write-Host ""}
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
 
 
 
