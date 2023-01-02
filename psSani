@@ -9,7 +9,8 @@ try{
     
      if($currentDomainandUser -in $admins.Name){
     
-        Write-Host 'This user is a CONFIRMED member of the Administrators group.'
+        Write-Host `n'***This user is a CONFIRMED member of the Administrators group in the appropriate Domain. Starting Program Now....***'`n
+        
     }else{
     
         Throw #This 'Throw' allows a break from the if statement into the catch 'Throw' to exit the program.
@@ -19,23 +20,26 @@ try{
 
 }catch{
     
-        Throw 'Could NOT confirm that this user is a member of the Administrators group. Exiting program now...' 
+        Throw "A fatal error has occurred. [ --Could NOT confirm that this user is a member of the Administrators group. Exiting program now...-- ] #0" 
          
 }
 
-
+Start-Sleep -s 6
 
 try{
 
     #21
     $defrag = schtasks /Change /DISABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag"
     $defrag
-    
+
+    Write-Host "The Following Action has Successfully Completed: ....Turned off Automated Defragmentation"
          
 }catch{
     #When script is validated, change Write-Host commands to Throw commands
-    Write-Host "A fatal error has occurred.[ --.-- ]"
+    Write-Host "A fatal error has occurred.[ --Was unable to Defrag-- #21 ]"
 }
+
+Start-Sleep -s 4
 
 try{
     
@@ -43,27 +47,36 @@ try{
     $stopSys = Stop-Service -Force -Name "SysMain" Set-Service -Name "SysMain" -StartupType Disabled
     $stopSys
     
+    Write-Host "The Following Action has Successfully Completed: ....Disabled SuperFetch or SysMain service"
          
 }catch{
-    Write-Host "A fatal error has occurred.[ --.-- ]"
+    Write-Host "A fatal error has occurred.[ --.-- #22 ]"
 }   
+
+Start-Sleep -s 4
 
 try{
     
     #23
-    $W32TM = w32tm /query /status
-    $W32TM
+
+    Set-Service -Name "W32Time" -Status Running -StartupType Automatic
+
+    tzutil /s "Central Standard Time"
+
+    w32tm /query /status
     
+    Write-Host "The Following Action has Successfully Completed: ....Verified that 'Windows Time' Service is turned on and is running."
          
 }catch{
-    Write-Host "A fatal error has occurred.[ --.-- ]"
+    Write-Host "A fatal error has occurred.[ --.-- #23 ]"
 }
 
+Start-Sleep -s 4
 
 function GET-W32TMStatus($arg){
 
     $W32TMStat = ConvertFrom-StringData ($arg -join "`n" -replace ':', '=')
-    if($W32TMStat.Source -eq "time.windows.com,0x9"){
+    if($W32TMStat.Source -eq "time.windows.com,0x9"-or "time.windows.com,0x8"){
     
         return $true
     
@@ -75,22 +88,26 @@ function GET-W32TMStatus($arg){
 
 }
 
+Start-Sleep -s 4
 
 try{
     #24
     if(GET-W32TMStatus(w32tm /query /status)){
         
-        Write-Host "W32TM Source Name Verified... Moving On... `n"
+        Write-Host "W32TM Source Name Verified... Moving On... "`n
     
     }elseif(GET-W32TMStatus(w32tm /query /status -eq $false)){
     
+        Write-Host "The Following Action has Successfully Completed: ....Verified that the Windows Time is syncing correctly."
 }
     
     
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Source name does not match.-- ]"
+    Write-Host "A fatal error has occurred.[ --Source name does not match.-- #24 ]"
 }
+
+Start-Sleep -s 4
 
 function Sched-Cleanup($arg){
 
@@ -112,11 +129,15 @@ function Sched-Cleanup($arg){
  
     Sched-Cleanup(Get-ScheduledTask)
 
+    Write-Host "The Following Action has Successfully Completed: ....Removed Windows tasks that are not needed"
+
 }catch{
 
-    Write-Host "Could not remove scheduled task."
+    Write-Host "A fatal error has occurred.[ --Could not remove scheduled task.-- #25 ]"
 
 }
+
+Start-Sleep -s 4
 
 try{
 
@@ -124,37 +145,59 @@ try{
 
     Set-NetFirewallProfile -Enabled False
 
+    Write-Host "The Following Action has Successfully Completed: ....Turned off Windows Firewall"
+
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Disable Firewall-- ]"
+    Write-Host "Inadequate permissions to perform this action. [ --Disable Firewall #26-- ]"
+}
+
+Start-Sleep -s 4
+
+try{
+    #27
+    $defaultBrowserKeyHTTPS = (Get-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -Name ProgId).ProgId 
+    $defaultBrowserKeyHTTP = (Get-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice' -Name ProgId).ProgId 
+
+    if($defaultBrowserKeyHTTPS -ne "IE.HTTPS" -or $defaultBrowserKeyHTTP -ne "IE-HTTP"){
+
+        Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -Name ProgId -Value 'IE-HTTPS'
+
+        Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice' -Name ProgId -Value 'IE-HTTP'
+}
+
+}catch{
+
+    Write-Host "Inadequate permissions to perform this action. [ --Unable to Set Default Browser #27-- ]"
 
 }
 
-#>
+
 try{
 
     #28
 
-    #Setting IExplorer settings
-    Write-Verbose "Now configuring IE"
-
     #Navigate to the domains folder in the registry
-    set-location "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
-    set-location ZoneMap\Domains
+    Set-Location "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\Domains\" #Default Security
+    #Set-Location "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\EscDomains\" #For Enchanced Security
+    New-Item ppdi.local
+    Set-Location ppdi.local
+    New-ItemProperty . -Name https -Value 2 -Type DWORD
 
     #Create a new folder with the website name
-    new-item https://*.ppdi.local -Force #website part without https
-    set-location https://*.ppdi.local
-    new-itemproperty . -Name https -Value 2 -Type DWORD -Force
 
-    Write-Host "Site added Successfully"
+    Write-Host "The Following Action has Successfully Completed: ....Added https://*.ppdi.local to trusted sites"
+    
+    Write-Host "Trusted-Site added Successfully"
     Start-Sleep -s 2
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Set Trusted Sites-- ]"
+    Write-Host "Inadequate permissions to perform this action. [ --Unable to Set Trusted Sites #28-- ]"
 
 }
+
+Start-Sleep -s 4
 
 function Get-PnpErrors($arg){
 
@@ -175,16 +218,30 @@ try{
         Get-PnpErrors($item) 
 
     }
+
+    Write-Host "The Following Action has Successfully Completed: ....Verified that devices in Device Manager are functional"
 }catch{
 
     Throw "An error has occured [ --Device was found with an error status-- ]"
-
 }
+
+Start-Sleep -s 4
 
 try{
     #30
-    Disable-NetAdapterPowerManagement
+    $adapters = Get-NetAdapter | Get-NetAdapterPowerManagement
+
+    foreach ($adapter in $adapters){
+
+        $adapter.AllowComputerToTurnOffDevice = 'Disabled'
+
+        $adapter | Set-NetAdapterPowerManagement
+
+} 
     Set-CimInstance -Query 'SELECT * FROM MSPower_DeviceEnable WHERE InstanceName LIKE "USB\\%"' -Namespace root/WMI -Property @{Enable = $false}
+
+    Write-Host "The Following Action has Successfully Completed: ....Turned off power management of NICs and USB ports"
+
 
 }catch{
 
@@ -192,11 +249,15 @@ try{
 
 }
 
+Start-Sleep -s 4
+
 try{
 
     #31
     POWERCFG /HIBERNATE OFF
     POWERCFG -duplicatescheme 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+
+    Write-Host "The Following Action has Successfully Completed: ....Hibernate is turned off and computer is set to High Performance power settings"
 
 }catch{
 
@@ -204,17 +265,27 @@ try{
     
 }
 
+Start-Sleep -s 4
+
 
 try{
     #33, Must be run in admin shell
 
     C:\Windows\System32\cmd.exe /k %windir%\System32\reg.exe ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f
 
+    Write-Host "The Following Action has Successfully Completed: ....Turned off User Account Control Settings"
+
 }catch{
 
     Write-Host "Inadequate permissions to perform this action.[ --Unable to turn off UAC-- ]"
-    
+   
 }
+
+Start-Sleep -s 4
+
+#34try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+
+#35try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
 
 try{
     #36
@@ -222,12 +293,15 @@ try{
     $pageFile = Get-WmiObject Win32_ComputerSystem -EnableAllPrivileges
     $pageFile.AutomaticManagedPagefile = $true #SET TO $FALSE TO DISABLE automatic swap file management
     $pageFile.put() | Out-Null
+
+    Write-Host "The Following Action has Successfully Completed: ....Automatic Swap File Management has been Enabled"
     
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action.[ --Unable to enable automatic swap file management-- ]"
-   
+    Write-Host "Inadequate permissions to perform this action.[ --Unable to enable automatic swap file management-- ]" 
 }
+
+Start-Sleep -s 4
 
 try{
     #37
@@ -235,6 +309,8 @@ try{
     $disableIndex = Get-WmiObject -Class Win32_Volume -Filter "DriveLetter='C:'"
     $disableIndex.IndexingEnabled = $false
     $disableIndex.Put()
+
+    Write-Host "The Following Action has Successfully Completed: '....Allow Indexing Service to index this disk for fast file searching' has been turned off for all hard drives."
     
 }catch{
 
@@ -242,8 +318,11 @@ try{
   
 }
 
+Start-Sleep -s 4
 
 
+
+Stop
 
 
 
