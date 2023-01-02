@@ -89,7 +89,7 @@ Start-Sleep -s 4
 }
 
  try{
-
+    #24
     if(GET-W32TMStatus(w32tm /query /status) -eq $true){
         
         Write-Host `n "W32TM Source Name Verified... Moving On... Verified that the Windows Time is syncing correctly."`n
