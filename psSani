@@ -73,10 +73,10 @@ try{
 
 Start-Sleep -s 4
 
-function GET-W32TMStatus($arg){
+ function GET-W32TMStatus($arg){
 
     $W32TMStat = ConvertFrom-StringData ($arg -join "`n" -replace ':', '=')
-    if($W32TMStat.Source -eq "time.windows.com,0x9"-or "time.windows.com,0x8"){
+    if($W32TMStat.Source -eq "time.windows.com,0x9"-or $W32TMStat.Source -eq "time.windows.com,0x8"){
     
         return $true
     
@@ -88,25 +88,22 @@ function GET-W32TMStatus($arg){
 
 }
 
-Start-Sleep -s 4
+ try{
 
-try{
-    #24
-    if(GET-W32TMStatus(w32tm /query /status)){
+    if(GET-W32TMStatus(w32tm /query /status) -eq $true){
         
-        Write-Host "W32TM Source Name Verified... Moving On... "`n
+        Write-Host `n "W32TM Source Name Verified... Moving On... Verified that the Windows Time is syncing correctly."`n
     
-    }elseif(GET-W32TMStatus(w32tm /query /status -eq $false)){
+    }else{
     
-        Write-Host "The Following Action has Successfully Completed: ....Verified that the Windows Time is syncing correctly."
-}
-    
-    
+       throw
+    }
+
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Source name does not match.-- #24 ]"
-}
+    Throw "This system is not synchronized with MADDC01 or MADDC02"
 
+}
 Start-Sleep -s 4
 
 function Sched-Cleanup($arg){
