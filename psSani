@@ -1,5 +1,7 @@
 #**************Script must be run from an Administrator account in an Administrator Shell**************#
 
+#Search Reg key 'hkcu' for all items like the word *tool; Get-ChildItem -Path hkcu:\ -Recurse -ErrorAction SilentlyContinue | Where-Object {$_.Name -like "*tool*"}*#
+
 $allGroups = Get-LocalGroup #Gets all groups 
 $admins = Get-LocalGroupMember -Group 'Administrators' #Gets all members of the 'Administrators' Group
 $currentDomainandUser = "$($env:UserDomain)\$($env:UserName)" #Gets current user Domain and Username
@@ -16,7 +18,6 @@ try{
         Throw #This 'Throw' allows a break from the if statement into the catch 'Throw' to exit the program.
        
     }
-
 
 }catch{
     
@@ -50,7 +51,7 @@ try{
     Write-Host "The Following Action has Successfully Completed: ....Disabled SuperFetch or SysMain service"
          
 }catch{
-    Write-Host "A fatal error has occurred.[ --.-- #22 ]"
+    Write-Host "A fatal error has occurred.[ --SysMain Service Could Not Be Disabled-- #22 ]"
 }   
 
 Start-Sleep -s 4
@@ -68,7 +69,7 @@ try{
     Write-Host "The Following Action has Successfully Completed: ....Verified that 'Windows Time' Service is turned on and is running."
          
 }catch{
-    Write-Host "A fatal error has occurred.[ --.-- #23 ]"
+    Write-Host "A fatal error has occurred.[ --Could not verify that Windows Time is currently turned on or running.-- #23 ]"
 }
 
 Start-Sleep -s 4
@@ -87,12 +88,14 @@ Start-Sleep -s 4
     }
 
 }
-
+ 
  try{
+
     #24
+
     if(GET-W32TMStatus(w32tm /query /status) -eq $true){
         
-        Write-Host `n "W32TM Source Name Verified... Moving On... Verified that the Windows Time is syncing correctly."`n
+        Write-Host "W32TM Source Name Verified... Moving On... Verified that the Windows Time is syncing correctly."`n
     
     }else{
     
@@ -101,9 +104,10 @@ Start-Sleep -s 4
 
 }catch{
 
-    Throw "This system is not synchronized with MADDC01 or MADDC02"
+    Write-Host "This system is not synchronized with either source: MADDC01 or MADDC02"
 
 }
+
 Start-Sleep -s 4
 
 function Sched-Cleanup($arg){
@@ -226,6 +230,19 @@ Start-Sleep -s 4
 
 try{
     #30
+    <#Get-PnpDevice |
+    Where-Object { $_.FriendlyName -match 'USB Enhanced Host Controller' } |
+    Where-Object { $_.Status -ne 'OK' } |
+    ForEach-Object {
+        $_ | Disable-PnpDevice -Confirm:$false
+        $_ | Enable-PnpDevice -Confirm:$false
+    }
+
+    #****_________________________
+
+    #this is working below
+    (Get-PnpDevice).Friendlyname -like "*host*"
+    #>
     $adapters = Get-NetAdapter | Get-NetAdapterPowerManagement
 
     foreach ($adapter in $adapters){
@@ -264,6 +281,11 @@ try{
 
 Start-Sleep -s 4
 
+try{
+
+    #32
+
+}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
 
 try{
     #33, Must be run in admin shell
@@ -280,9 +302,17 @@ try{
 
 Start-Sleep -s 4
 
-#34try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{
 
-#35try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+    #34
+
+}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+
+try{
+
+    #35
+
+}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
 
 try{
     #36
@@ -317,7 +347,50 @@ try{
 
 Start-Sleep -s 4
 
+try{
+    #38
+    Write-Host "This step will be skipped in this script due to the rarity of its use."
 
+}catch{Write-Host "A fatal error has occurred.[ Unknown Error ]" }
+
+  function Unpin-App($appname) {
+
+    ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() |
+        ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from taskbar'} | %{$_.DoIt()}
+}
+
+try{
+
+    #39
+  
+
+    Unpin-App("Google Chrome")
+    #Unpin-App("Microsoft Store")
+
+
+}catch{Write-Host "A fatal error has occurred.[ --Could not unpin items from taskbar.-- ]" }
+
+try{
+
+    #40
+
+}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+
+try{
+
+    #41
+    msfeedssync disable
+    Write-Host "Msfeedssync.exe has been disabled."
+
+}catch{Write-Host "A fatal error has occurred.[ Could not disable Msfeedssync.exe ]" }
+
+try{
+
+    #42
+
+}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+
+try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
 
 Stop
 
