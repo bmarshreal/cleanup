@@ -2,6 +2,12 @@
 
 #Search Reg key 'hkcu' for all items like the word *tool; Get-ChildItem -Path hkcu:\ -Recurse -ErrorAction SilentlyContinue | Where-Object {$_.Name -like "*tool*"}*#
 
+#Pinned items on  toolbar: C:\Users\$env:UserName\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar
+
+#When script is validated, change Write-Host commands to Throw commands
+
+#MSI File Installation options command for use in powershell or cmd: #Start-Process -FilePath "<Program Installer.EXE Path>" -Verb runAs -ArgumentList /?
+
 $allGroups = Get-LocalGroup #Gets all groups 
 $admins = Get-LocalGroupMember -Group 'Administrators' #Gets all members of the 'Administrators' Group
 $currentDomainandUser = "$($env:UserDomain)\$($env:UserName)" #Gets current user Domain and Username
@@ -9,9 +15,11 @@ $currentDomainandUser = "$($env:UserDomain)\$($env:UserName)" #Gets current user
 
 try{
     
+    #0
+
      if($currentDomainandUser -in $admins.Name){
     
-        Write-Host `n'***This user is a CONFIRMED member of the Administrators group in the appropriate Domain. Starting Program Now....***'`n
+        Write-Host `n'***The current user is a CONFIRMED member of the Administrators group in the appropriate Domain. Starting Program Now....***'`n
         
     }else{
     
@@ -21,23 +29,45 @@ try{
 
 }catch{
     
-        Throw "A fatal error has occurred. [ --Could NOT confirm that this user is a member of the Administrators group. Exiting program now...-- ] #0" 
+        Throw "A fatal error has occurred. [ --Could NOT confirm that the current user is a member of the Administrators group. Exiting program now...-- #0 ]" 
          
+}
+
+try{
+
+    #20 **Needs Testing with labs.ppdi.local access**
+
+    Start-Process -FilePath "\\labs\madison\AdminInstalls\Adobe Reader DC\AcroRdrDC1900820081_en_US.exe" -Verb runAs
+
+    Write-Host "The Following Action has Successfully Completed: ....Microsoft Office has been installed."
+         
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Could not install Adobe DC Reader.-- #20 ]"
 }
 
 Start-Sleep -s 6
 
+
+
+
+#***___________________________Everything below this point is not Inst-Net specific... Everything Above this point requires access to the Inst-Net___________________________***#
+
+
+
+
 try{
 
     #21
+
     $defrag = schtasks /Change /DISABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag"
     $defrag
 
     Write-Host "The Following Action has Successfully Completed: ....Turned off Automated Defragmentation"
          
 }catch{
-    #When script is validated, change Write-Host commands to Throw commands
-    Write-Host "A fatal error has occurred.[ --Was unable to Defrag-- #21 ]"
+
+    Write-Host "A fatal error has occurred.[ --Was unable to Defrag.-- #21 ]"
 }
 
 Start-Sleep -s 4
@@ -45,13 +75,15 @@ Start-Sleep -s 4
 try{
     
     #22
+
     $stopSys = Stop-Service -Force -Name "SysMain" Set-Service -Name "SysMain" -StartupType Disabled
     $stopSys
     
     Write-Host "The Following Action has Successfully Completed: ....Disabled SuperFetch or SysMain service"
          
 }catch{
-    Write-Host "A fatal error has occurred.[ --SysMain Service Could Not Be Disabled-- #22 ]"
+
+    Write-Host "A fatal error has occurred.[ --SysMain Service Could Not Be Disabled.-- #22 ]"
 }   
 
 Start-Sleep -s 4
@@ -69,12 +101,15 @@ try{
     Write-Host "The Following Action has Successfully Completed: ....Verified that 'Windows Time' Service is turned on and is running."
          
 }catch{
+
     Write-Host "A fatal error has occurred.[ --Could not verify that Windows Time is currently turned on or running.-- #23 ]"
 }
 
 Start-Sleep -s 4
 
- function GET-W32TMStatus($arg){
+    #GET-W32TMStatus Function: Function returns True if Windows Time service is synching correctly, otherwise it returns False.
+
+    function GET-W32TMStatus($arg){
 
     $W32TMStat = ConvertFrom-StringData ($arg -join "`n" -replace ':', '=')
     if($W32TMStat.Source -eq "time.windows.com,0x9"-or $W32TMStat.Source -eq "time.windows.com,0x8"){
@@ -104,24 +139,26 @@ Start-Sleep -s 4
 
 }catch{
 
-    Write-Host "This system is not synchronized with either source: MADDC01 or MADDC02"
+    Write-Host "[ --This system is not synchronized with either source: MADDC01 or MADDC02.-- #24 ]"
 
 }
 
 Start-Sleep -s 4
 
-function Sched-Cleanup($arg){
+    #Sched-Cleanup Function: Function searches through all Scheduled Tasks for "One-Drive" and "Adobe" and unschedules them.
 
-    #$tasks = ConvertFrom-StringData ($arg -join "`n" -replace ':', '=')
-    foreach($name in $arg.TaskName){
-        if($name -like "One*" -or $name -like "Adobe*"){
+    function Sched-Cleanup($arg){
 
-            #Unregister-ScheduledTask -TaskName $name -Confirm:$false        
-            Write-Host "The Scheduled Task..." $name "has been unregistered."
+        #$tasks = ConvertFrom-StringData ($arg -join "`n" -replace ':', '=')
+        foreach($name in $arg.TaskName){
+            if($name -like "One*" -or $name -like "Adobe*"){
 
-        }
+                #Unregister-ScheduledTask -TaskName $name -Confirm:$false        
+                Write-Host "The Scheduled Task..." $name "has been unregistered."
+
+            }
     
-    }
+        }
  }
 
  try{
@@ -150,13 +187,15 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Disable Firewall #26-- ]"
+    Write-Host "Inadequate permissions to perform this action. [ --Disable Firewall. -- #26 ]"
 }
 
 Start-Sleep -s 4
 
 try{
+
     #27
+
     $defaultBrowserKeyHTTPS = (Get-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -Name ProgId).ProgId 
     $defaultBrowserKeyHTTP = (Get-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice' -Name ProgId).ProgId 
 
@@ -169,7 +208,7 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Unable to Set Default Browser #27-- ]"
+    Write-Host "Inadequate permissions to perform this action. [ --Unable to Set Default Browser.-- #27 ]"
 
 }
 
@@ -179,8 +218,11 @@ try{
     #28
 
     #Navigate to the domains folder in the registry
+
     Set-Location "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\Domains\" #Default Security
+
     #Set-Location "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\EscDomains\" #For Enchanced Security
+
     New-Item ppdi.local
     Set-Location ppdi.local
     New-ItemProperty . -Name https -Value 2 -Type DWORD
@@ -194,25 +236,27 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Unable to Set Trusted Sites #28-- ]"
+    Write-Host "Inadequate permissions to perform this action. [ --Unable to Set Trusted Sites.-- #28 ]"
 
 }
 
 Start-Sleep -s 4
 
-function Get-PnpErrors($arg){
+    #Get-PnpErrors Function: Function searches through all PnpDevices for an Error-State. If the devices is in an Error-State, an error will be thrown. 
 
-    if($arg.Name -eq "Error"){
-        return $false
-    }else{
-        return $true
-    }
+    function Get-PnpErrors($arg){
+
+        if($arg.Name -eq "Error"){
+            return $false
+        }else{
+            return $true
+        }
 
 }
 
 try{
 
-#29 currently working on this....
+    #29 currently working on this.... **Needs testing at physical PC!**
 
     foreach($item in Get-PnpDevice){
     
@@ -221,15 +265,17 @@ try{
     }
 
     Write-Host "The Following Action has Successfully Completed: ....Verified that devices in Device Manager are functional"
+
 }catch{
 
-    Throw "An error has occured [ --Device was found with an error status-- ]"
+    Throw "An error has occured [ --Device was found with an error status.-- #29 ]"
 }
 
 Start-Sleep -s 4
 
 try{
-    #30
+    #30 **Needs testing at physical PC!**
+
     <#Get-PnpDevice |
     Where-Object { $_.FriendlyName -match 'USB Enhanced Host Controller' } |
     Where-Object { $_.Status -ne 'OK' } |
@@ -243,6 +289,7 @@ try{
     #this is working below
     (Get-PnpDevice).Friendlyname -like "*host*"
     #>
+
     $adapters = Get-NetAdapter | Get-NetAdapterPowerManagement
 
     foreach ($adapter in $adapters){
@@ -259,7 +306,7 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Unable to Disable Power Management-- ]"
+    Write-Host "Inadequate permissions to perform this action. [ --Unable to Disable Power Management.-- #30 ]"
 
 }
 
@@ -267,7 +314,8 @@ Start-Sleep -s 4
 
 try{
 
-    #31
+    #31 **Needs testing at physical PC!**
+
     POWERCFG /HIBERNATE OFF
     POWERCFG -duplicatescheme 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
 
@@ -275,7 +323,7 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Unable to either turn Hibernate mode off or high performance mode on-- ]"
+    Write-Host "Inadequate permissions to perform this action. [ --Unable to either turn Hibernate mode off or high performance mode on.-- #31 ]"
     
 }
 
@@ -288,7 +336,8 @@ try{
 }catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
 
 try{
-    #33, Must be run in admin shell
+
+    #33, Must be run in admin shell **Needs testing at physical PC!**
 
     C:\Windows\System32\cmd.exe /k %windir%\System32\reg.exe ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f
 
@@ -296,7 +345,7 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action.[ --Unable to turn off UAC-- ]"
+    Write-Host "Inadequate permissions to perform this action.[ --Unable to turn off UAC.-- #33 ]"
    
 }
 
@@ -304,17 +353,35 @@ Start-Sleep -s 4
 
 try{
 
-    #34
+    #34 **Needs testing at physical PC!**
 
-}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+    $netAdapterList = Get-NetAdapter | Format-List
+
+    foreach($item in $netAdapterList){
+        
+        if($item.Name -like "*Bluetooth*" -or $item.Name -like "*Wifi*"){
+        
+            Disable-NetAdapter -Name $item.Name
+        
+        }
+    
+    }
+
+
+}catch{Write-Host "A fatal error has occurred.[ --Could not turn off either Boothtooth or Wifi Adapters.-- #34 ]" }
 
 try{
 
     #35
 
-}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+    New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows" -Name "Explorer" -force
+    New-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -PropertyType "DWord" -Value 1
+    New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -PropertyType "DWord" -Value 0
+
+}catch{Write-Host "A fatal error has occurred.[ --Could not disable notifications.-- #35 ]" }
 
 try{
+
     #36
 
     $pageFile = Get-WmiObject Win32_ComputerSystem -EnableAllPrivileges
@@ -325,7 +392,7 @@ try{
     
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action.[ --Unable to enable automatic swap file management-- ]" 
+    Write-Host "Inadequate permissions to perform this action.[ --Unable to enable automatic swap file management.-- #36 ]" 
 }
 
 Start-Sleep -s 4
@@ -341,19 +408,23 @@ try{
     
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action.[ --Disable automatic indexing of hard drive letter C:-- ]"
+    Write-Host "Inadequate permissions to perform this action.[ --Disable automatic indexing of hard drive letter C:.-- #37 ]"
   
 }
 
 Start-Sleep -s 4
 
 try{
+
     #38
+
     Write-Host "This step will be skipped in this script due to the rarity of its use."
+    
+}catch{Write-Host "A fatal error has occurred.[ --Unknown Error.-- #38 ]" }
 
-}catch{Write-Host "A fatal error has occurred.[ Unknown Error ]" }
+    #Unpin-App Function: Function accepts $appname (name of application) argument to unpin from the Taskbar.
 
-  function Unpin-App($appname) {
+    function Unpin-App($appname) {
 
     ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() |
         ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from taskbar'} | %{$_.DoIt()}
@@ -362,13 +433,45 @@ try{
 try{
 
     #39
-  
 
-    Unpin-App("Google Chrome")
-    #Unpin-App("Microsoft Store")
+    #Remove all shortcuts from the desktop
 
+    $desktop = Get-ChildItem -path C:\Users\$env:UserName\Desktop\
 
-}catch{Write-Host "A fatal error has occurred.[ --Could not unpin items from taskbar.-- ]" }
+    foreach($item in $desktop){
+
+        if($item -notlike "*Recycling Bin*" -or $item -notlike "*Adobe Reader*"){Remove-Item C:\Users\$env:UserName\Desktop\$item}
+
+}
+    #___________________________________________________________________________________________________________________________________
+    
+    #Unpin all items from the taskbar
+
+    $toolbar = Get-ChildItem -Exclude ".lnk" "C:\Users\$env:UserName\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
+
+    foreach($item in $toolbar){
+    
+        if($item.Name -notlike "*File Explorer*" -or $item.Name -notlike "*Task View*"){
+           
+            Unpin-App($item.Name.Replace(".lnk",""))
+
+        }
+    
+    }
+    
+
+    #___________________________________________________________________________________________________________________________________
+    
+    #Unpin all items from the start menu
+
+    (New-Object -Com Shell.Application).
+    NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').
+    Items() |
+    %{ $_.Verbs() } |
+    ?{$_.Name -match 'Un.*pin from Start'} |
+    %{$_.DoIt()}
+
+}catch{Write-Host "A fatal error has occurred.[ --Either could not unpin items from Taskbar\Start Menu or delete items from the Desktop.-- #39 ]" }
 
 try{
 
@@ -379,51 +482,68 @@ try{
 try{
 
     #41
+
     msfeedssync disable
     Write-Host "Msfeedssync.exe has been disabled."
 
-}catch{Write-Host "A fatal error has occurred.[ Could not disable Msfeedssync.exe ]" }
+}catch{Write-Host "A fatal error has occurred.[ --Could not disable Msfeedssync.exe.-- #41 ]" }
 
 try{
 
     #42
 
+    Write-Host "This step is not included in this program due to the rarity of its use."
+
+
+}catch{Write-Host "A fatal error has occurred.[ --Unknown Error.-- #42 ]" }
+
+try{
+
+    #43
+
 }catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
 
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+try{
+
+    #44
+
+    shutdown -r
+
+}catch{Write-Host "A fatal error has occurred.[ --This PC could not be shutdown/restarted.-- #44 ]" }
+
+try{
+
+    #45
+
+    Write-Host "Please wait 24 hours for this PC to update.Then perform a Windows search for 'Check for updates'. Apply updates until computer says it's up to date" 
+
+}catch{Write-Host "A fatal error has occurred.[ --Unknown Error.-- #45 ]" }
+
+try{
+
+    #46
+
+}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+
+try{
+
+    #47
+
+}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+
+try{
+
+    #48
+
+}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+
+try{
+
+    #49
+
+}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
 
 Stop
-
-
-
-
-
-
-
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
-try{}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
 
 
 
