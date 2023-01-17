@@ -35,23 +35,195 @@ try{
 
 try{
 
-    #20 **Needs Testing with labs.ppdi.local access**
+    #9
 
-    Start-Process -FilePath "\\labs\madison\AdminInstalls\Adobe Reader DC\AcroRdrDC1900820081_en_US.exe" -Verb runAs
+    "tzutil /s 'Central Standard Time'"
 
-    Write-Host "The Following Action has Successfully Completed: ....Microsoft Office has been installed."
+    Write-Host "The Following Action has Successfully Completed: ....Time Zone updated to 'Central Standard Time' ."
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not install Adobe DC Reader.-- #20 ]"
+    Write-Host "A fatal error has occurred.[ --Could not update Time Zone settings.-- #20 ]"
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #13
+
+    $users = Get-LocalUser
+
+    foreach($user in $users){
+    
+        if($user.Name -ne "labadmin"){
+        
+            Disable-LocalUser $user.Name
+        
+        }
+    
+    }
+
+    Rename-LocalUser -Name "Administrator" -NewName "labadmin"
+    $Password = Read-Host -AsSecureString "Please enter the standard password into the prompt. Hint: '>Bier=...' "
+    $UserAccount = Get-LocalUser -Name "labadmin"
+    $UserAccount | Set-LocalUser -Password $Password
+    Set-LocalUser -Name "labadmin" -PasswordNeverExpires 1
+    Add-LocalGroupMember -Group "Remote Desktop Users" -Member "PA Validation-Team"
+
+    Write-Host "The Following Action has Successfully Completed: ....Updated Remote Desktop Users and Administrator name. All accounts other than 'labadmin' have been disabled."
+         
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Could not update Remote Desktop Users group / Administrator name settings. All accounts may not be disabled.-- #13 ]"
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #14
+
+    Start-Process -FilePath "\\labs\madison\AdminInstalls\Adobe Reader DC\AcroRdrDC1900820081_en_US.exe" -Verb runAs
+
+    Write-Host "The Following Action has Successfully Completed: ....Adobe Reader DC has been installed."
+         
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Could not install Adobe DC Reader.-- #14 ]"
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #15 **Needs Testing with labs.ppdi.local access**
+
+    $keyOneCount = (Get-ChildItem -path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate").ValueCount
+    $keyTwoCount = (Get-ChildItem -path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU").ValueCount
+
+    if($keyOneCount -lt 5 -or $keyTwoCount -lt 6){
+    
+        gpupdate /force
+
+        usoclient startscan
+    
+    }
+
+
+
+    <#
+
+    HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate
+    "TargetGroupEnabled"=dword:00000001
+    "ElevateNonAdmins"=dword:00000000
+    "WUServer"="http://madintsus001:8530"
+    "WUStatusServer"="http://madintsus001:8530"
+    "TargetGroup"="Pre-Deployment SAs"
+
+    HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU
+    "NoAutoUpdate"=dword:00000000
+    "UseWUServer"=dword:00000001
+    "NoAUShutdownOption"=dword:00000001
+    "AUOptions"=dword:00000002
+    "ScheduledInstallDay"=dword:00000000
+    "ScheduledInstallTime"=dword:00000003
+    
+    #>
+    
+         
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Could not verify / update registry keys .-- #15 ]"
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #16 **Needs Testing with labs.ppdi.local access**
+
+    $programsList = (Get-WmiObject -Class Win32_Product).Name
+
+    foreach($program in $programsList){
+    
+        if($program -like "*OneDrive*" -or $program -like "*Windows Media Player*" -or $program -like "*CutePDF*"){
+        
+            $MyApp = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq $program}
+
+            $MyApp.Uninstall()
+        
+        }
+    
+    }
+         
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Could not Uninstall all unecessary software.-- #16 ]"
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #17 **Needs Testing with labs.ppdi.local access**
+
+    Start-Process -FilePath "\\labs\Madison\AdminInstalls\Radmin\Radmin_Server_3.5" -Verb runAs
+
+    Write-Host "The Following Action has Successfully Completed: ....Radmin_Server 3.5 has been installed."
+         
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Could not install Radmin_Server 3.5.-- #17 ]"
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #18 **Needs Testing with labs.ppdi.local access**
+
+    Write-Host "Moving on... Please wait..."
+         
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Unknown Error.-- #18 ]"
+}
+
+Start-Sleep -s 6
+
+
+try{
+
+    #19 **Needs Testing with labs.ppdi.local access**
+
+    Start-Process -FilePath "\\labs\madison\AdminInstalls\Adobe Reader DC\AcroRdrDC1900820081_en_US.exe" -Verb runAs
+
+    Write-Host "The Following Action has Successfully Completed: ....Adobe Reader DC has been installed."
+         
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Could not install Adobe DC Reader.-- #19 ]"
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #20
+
+    Write-Host "Please refer to your Validation Analyst to verify if this computer requires Microsoft Office or not..."
+         
+}catch{
+
+    Write-Host "A fatal error has occurred.[ --Unknown Error.-- #19 ]"
 }
 
 Start-Sleep -s 6
 
 
 
-
-#***___________________________Everything below this point is not Inst-Net specific... Everything Above this point requires access to the Inst-Net___________________________***#
+#***___________________________Code below this point is not Inst-Net specific... Code above this point may require access to the Inst-Net___________________________***#
 
 
 
@@ -126,7 +298,7 @@ Start-Sleep -s 4
  
  try{
 
-    #24
+    #24 **NEEDS TO BE CHANGED TO  "MADDC01 or MADDC02" IN FINAL VERSION!!!***
 
     if(GET-W32TMStatus(w32tm /query /status) -eq $true){
         
@@ -333,7 +505,9 @@ try{
 
     #32
 
-}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+    Disable-WindowsErrorReporting
+
+}catch{Write-Host "A fatal error has occurred.[ --Could not disable troubleshooting.-- ]" }
 
 try{
 
