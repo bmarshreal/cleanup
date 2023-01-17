@@ -43,7 +43,8 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not update Time Zone settings.-- #20 ]"
+    Throw "A fatal error has occurred.[ --Could not update Time Zone settings.-- #20 ]"
+
 }
 
 Start-Sleep -s 6
@@ -75,7 +76,8 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not update Remote Desktop Users group / Administrator name settings. All accounts may not be disabled.-- #13 ]"
+    Throw "A fatal error has occurred.[ --Could not update Remote Desktop Users group / Administrator name settings. All accounts may not be disabled.-- #13 ]"
+
 }
 
 Start-Sleep -s 6
@@ -90,7 +92,8 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not install Adobe DC Reader.-- #14 ]"
+    Throw "A fatal error has occurred.[ --Could not install Adobe DC Reader.-- #14 ]"
+
 }
 
 Start-Sleep -s 6
@@ -134,7 +137,7 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not verify / update registry keys .-- #15 ]"
+    Throw "A fatal error has occurred.[ --Could not verify / update registry keys .-- #15 ]"
 }
 
 Start-Sleep -s 6
@@ -159,7 +162,7 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not Uninstall all unecessary software.-- #16 ]"
+    Throw "A fatal error has occurred.[ --Could not Uninstall all unecessary software.-- #16 ]"
 }
 
 Start-Sleep -s 6
@@ -174,7 +177,7 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not install Radmin_Server 3.5.-- #17 ]"
+    Throw "A fatal error has occurred.[ --Could not install Radmin_Server 3.5.-- #17 ]"
 }
 
 Start-Sleep -s 6
@@ -187,7 +190,7 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Unknown Error.-- #18 ]"
+    Throw "A fatal error has occurred.[ --Unknown Error.-- #18 ]"
 }
 
 Start-Sleep -s 6
@@ -203,7 +206,7 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not install Adobe DC Reader.-- #19 ]"
+    Throw "A fatal error has occurred.[ --Could not install Adobe DC Reader.-- #19 ]"
 }
 
 Start-Sleep -s 6
@@ -216,7 +219,7 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Unknown Error.-- #19 ]"
+    Throw "A fatal error has occurred.[ --Unknown Error.-- #19 ]"
 }
 
 Start-Sleep -s 6
@@ -239,7 +242,7 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Was unable to Defrag.-- #21 ]"
+    Throw "A fatal error has occurred.[ --Was unable to Defrag.-- #21 ]"
 }
 
 Start-Sleep -s 4
@@ -255,7 +258,7 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --SysMain Service Could Not Be Disabled.-- #22 ]"
+    Throw "A fatal error has occurred.[ --SysMain Service Could Not Be Disabled.-- #22 ]"
 }   
 
 Start-Sleep -s 4
@@ -274,7 +277,7 @@ try{
          
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not verify that Windows Time is currently turned on or running.-- #23 ]"
+    Throw "A fatal error has occurred.[ --Could not verify that Windows Time is currently turned on or running.-- #23 ]"
 }
 
 Start-Sleep -s 4
@@ -311,7 +314,7 @@ Start-Sleep -s 4
 
 }catch{
 
-    Write-Host "[ --This system is not synchronized with either source: MADDC01 or MADDC02.-- #24 ]"
+    Throw "[ --This system is not synchronized with either source: MADDC01 or MADDC02.-- #24 ]"
 
 }
 
@@ -343,7 +346,7 @@ Start-Sleep -s 4
 
 }catch{
 
-    Write-Host "A fatal error has occurred.[ --Could not remove scheduled task.-- #25 ]"
+    Throw "A fatal error has occurred.[ --Could not remove scheduled task.-- #25 ]"
 
 }
 
@@ -359,7 +362,8 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Disable Firewall. -- #26 ]"
+    Throw "Inadequate permissions to perform this action. [ --Disable Firewall. -- #26 ]"
+
 }
 
 Start-Sleep -s 4
@@ -380,7 +384,7 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Unable to Set Default Browser.-- #27 ]"
+    Throw "Inadequate permissions to perform this action. [ --Unable to Set Default Browser.-- #27 ]"
 
 }
 
@@ -408,7 +412,7 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Unable to Set Trusted Sites.-- #28 ]"
+    Throw "Inadequate permissions to perform this action. [ --Unable to Set Trusted Sites.-- #28 ]"
 
 }
 
@@ -478,7 +482,7 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Unable to Disable Power Management.-- #30 ]"
+    Throw "Inadequate permissions to perform this action. [ --Unable to Disable Power Management.-- #30 ]"
 
 }
 
@@ -495,7 +499,7 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action. [ --Unable to either turn Hibernate mode off or high performance mode on.-- #31 ]"
+    Throw "Inadequate permissions to perform this action. [ --Unable to either turn Hibernate mode off or high performance mode on.-- #31 ]"
     
 }
 
@@ -507,7 +511,11 @@ try{
 
     Disable-WindowsErrorReporting
 
-}catch{Write-Host "A fatal error has occurred.[ --Could not disable troubleshooting.-- ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --Could not disable troubleshooting.-- ]" 
+    
+}
 
 try{
 
@@ -519,7 +527,7 @@ try{
 
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action.[ --Unable to turn off UAC.-- #33 ]"
+    Throw "Inadequate permissions to perform this action.[ --Unable to turn off UAC.-- #33 ]"
    
 }
 
@@ -542,7 +550,11 @@ try{
     }
 
 
-}catch{Write-Host "A fatal error has occurred.[ --Could not turn off either Boothtooth or Wifi Adapters.-- #34 ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --Could not turn off either Boothtooth or Wifi Adapters.-- #34 ]" 
+    
+}
 
 try{
 
@@ -552,7 +564,11 @@ try{
     New-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -PropertyType "DWord" -Value 1
     New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -PropertyType "DWord" -Value 0
 
-}catch{Write-Host "A fatal error has occurred.[ --Could not disable notifications.-- #35 ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --Could not disable notifications.-- #35 ]" 
+    
+}
 
 try{
 
@@ -566,7 +582,7 @@ try{
     
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action.[ --Unable to enable automatic swap file management.-- #36 ]" 
+    Throw "Inadequate permissions to perform this action.[ --Unable to enable automatic swap file management.-- #36 ]" 
 }
 
 Start-Sleep -s 4
@@ -582,7 +598,7 @@ try{
     
 }catch{
 
-    Write-Host "Inadequate permissions to perform this action.[ --Disable automatic indexing of hard drive letter C:.-- #37 ]"
+    Throw "Inadequate permissions to perform this action.[ --Disable automatic indexing of hard drive letter C:.-- #37 ]"
   
 }
 
@@ -594,7 +610,11 @@ try{
 
     Write-Host "This step will be skipped in this script due to the rarity of its use."
     
-}catch{Write-Host "A fatal error has occurred.[ --Unknown Error.-- #38 ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --Unknown Error.-- #38 ]" 
+    
+}
 
     #Unpin-App Function: Function accepts $appname (name of application) argument to unpin from the Taskbar.
 
@@ -645,13 +665,21 @@ try{
     ?{$_.Name -match 'Un.*pin from Start'} |
     %{$_.DoIt()}
 
-}catch{Write-Host "A fatal error has occurred.[ --Either could not unpin items from Taskbar\Start Menu or delete items from the Desktop.-- #39 ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --Either could not unpin items from Taskbar\Start Menu or delete items from the Desktop.-- #39 ]" 
+    
+}
 
 try{
 
     #40
 
-}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --.-- ]" 
+    
+}
 
 try{
 
@@ -660,7 +688,11 @@ try{
     msfeedssync disable
     Write-Host "Msfeedssync.exe has been disabled."
 
-}catch{Write-Host "A fatal error has occurred.[ --Could not disable Msfeedssync.exe.-- #41 ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --Could not disable Msfeedssync.exe.-- #41 ]" 
+    
+}
 
 try{
 
@@ -669,13 +701,21 @@ try{
     Write-Host "This step is not included in this program due to the rarity of its use."
 
 
-}catch{Write-Host "A fatal error has occurred.[ --Unknown Error.-- #42 ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --Unknown Error.-- #42 ]" 
+    
+}
 
 try{
 
     #43
 
-}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --.-- ]" 
+    
+}
 
 try{
 
@@ -683,7 +723,11 @@ try{
 
     shutdown -r
 
-}catch{Write-Host "A fatal error has occurred.[ --This PC could not be shutdown/restarted.-- #44 ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --This PC could not be shutdown/restarted.-- #44 ]" 
+    
+}
 
 try{
 
@@ -691,35 +735,53 @@ try{
 
     Write-Host "Please wait 24 hours for this PC to update.Then perform a Windows search for 'Check for updates'. Apply updates until computer says it's up to date" 
 
-}catch{Write-Host "A fatal error has occurred.[ --Unknown Error.-- #45 ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --Unknown Error.-- #45 ]" 
+    
+}
 
 try{
 
     #46
 
-}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --.-- ]" 
+    
+}
 
 try{
 
     #47
 
-}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --.-- ]" 
+    
+}
 
 try{
 
     #48
 
-}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --.-- ]" 
+    
+}
 
 try{
 
     #49
 
-}catch{Write-Host "A fatal error has occurred.[ --.-- ]" }
+}catch{ 
+
+    Throw "A fatal error has occurred.[ --.-- ]" 
+    
+}
 
 Stop
-
-
 
 <#
 
