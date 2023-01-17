@@ -15,7 +15,7 @@ $currentDomainandUser = "$($env:UserDomain)\$($env:UserName)" #Gets current user
 
 try{
     
-    #0
+    #0 **Needs Testing with labs.ppdi.local access**
 
      if($currentDomainandUser -in $admins.Name){
     
@@ -37,7 +37,7 @@ Start-Sleep -s 6
 
 try{
 
-    #9
+    #9 **Needs Testing with labs.ppdi.local access**
 
     "tzutil /s 'Central Standard Time'"
 
@@ -53,7 +53,7 @@ Start-Sleep -s 6
 
 try{
 
-    #13
+    #13 **Needs Testing with labs.ppdi.local access**
 
     $users = Get-LocalUser
 
@@ -86,7 +86,7 @@ Start-Sleep -s 6
 
 try{
 
-    #14
+    #14 **Needs Testing with labs.ppdi.local access**
 
     Start-Process -FilePath "\\labs\madison\AdminInstalls\Adobe Reader DC\AcroRdrDC1900820081_en_US.exe" -Verb runAs
 
@@ -215,7 +215,7 @@ Start-Sleep -s 6
 
 try{
 
-    #20
+    #20 **Needs Testing with labs.ppdi.local access**
 
     Write-Host "Please refer to your Validation Analyst to verify if this computer requires Microsoft Office or not..."
          
