@@ -19,7 +19,7 @@ try{
 
      if($currentDomainandUser -in $admins.Name){
     
-        Write-Host `n'***The current user is a CONFIRMED member of the Administrators group in the appropriate Domain. Starting Program Now....***'`n
+        Write-Host -ForegroundColor Green `n'***The Following Action has Successfully Completed: ....The current user is a CONFIRMED member of the Administrators group in the appropriate Domain. Starting Program Now....***'`n
         
     }else{
     
@@ -41,7 +41,7 @@ try{
 
     "tzutil /s 'Central Standard Time'"
 
-    Write-Host "The Following Action has Successfully Completed: ....Time Zone updated to 'Central Standard Time' ."
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Time Zone updated to 'Central Standard Time' ."`n
          
 }catch{
 
@@ -68,13 +68,13 @@ try{
     }
 
     Rename-LocalUser -Name "Administrator" -NewName "labadmin"
-    $Password = Read-Host -AsSecureString "Please enter the standard password into the prompt. Hint: '>Bier=...' "
+    $Password = Read-Host -AsSecureString "Please set the standard password in the prompt. Hint: '>Bier=...' "
     $UserAccount = Get-LocalUser -Name "labadmin"
     $UserAccount | Set-LocalUser -Password $Password
     Set-LocalUser -Name "labadmin" -PasswordNeverExpires 1
     Add-LocalGroupMember -Group "Remote Desktop Users" -Member "PA Validation-Team"
 
-    Write-Host "The Following Action has Successfully Completed: ....Updated Remote Desktop Users and Administrator name. All accounts other than 'labadmin' have been disabled."
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Updated Remote Desktop Users and Administrator name. All accounts other than 'labadmin' have been disabled."`n
          
 }catch{
 
@@ -90,7 +90,7 @@ try{
 
     Start-Process -FilePath "\\labs\madison\AdminInstalls\Adobe Reader DC\AcroRdrDC1900820081_en_US.exe" -Verb runAs
 
-    Write-Host "The Following Action has Successfully Completed: ....Adobe Reader DC has been installed."
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Adobe Reader DC has been installed."`n
          
 }catch{
 
@@ -108,10 +108,16 @@ try{
     $keyTwoCount = (Get-ChildItem -path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU").ValueCount
 
     if($keyOneCount -lt 5 -or $keyTwoCount -lt 6){
-    
+
+        Write-Host -ForegroundColor Yellow `n"The Following Action is in Progress: ....Registry Keys and values COULD NOT be verified, they will now be configured."`n
+
         gpupdate /force
 
         usoclient startscan
+    
+    }else{
+    
+        Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Registry Keys and values have been verified."`n
     
     }
 
@@ -135,6 +141,7 @@ try{
     "ScheduledInstallTime"=dword:00000003
     
     #>
+    
     
          
 }catch{
@@ -161,6 +168,8 @@ try{
         }
     
     }
+
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Unecessary applications have been uninstalled."`n
          
 }catch{
 
@@ -175,7 +184,7 @@ try{
 
     Start-Process -FilePath "\\labs\Madison\AdminInstalls\Radmin\Radmin_Server_3.5" -Verb runAs
 
-    Write-Host "The Following Action has Successfully Completed: ....Radmin_Server 3.5 has been installed."
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Radmin_Server 3.5 has been installed."`n
          
 }catch{
 
@@ -188,7 +197,7 @@ try{
 
     #18 **Needs Testing with labs.ppdi.local access**
 
-    Write-Host "Moving on... Please wait..."
+    Write-Host -ForegroundColor Yellow `n"Moving on... Please wait..."`n
          
 }catch{
 
@@ -204,7 +213,7 @@ try{
 
     Start-Process -FilePath "\\labs\madison\AdminInstalls\Adobe Reader DC\AcroRdrDC1900820081_en_US.exe" -Verb runAs
 
-    Write-Host "The Following Action has Successfully Completed: ....Adobe Reader DC has been installed."
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Adobe Reader DC has been installed."`n
          
 }catch{
 
@@ -217,7 +226,7 @@ try{
 
     #20 **Needs Testing with labs.ppdi.local access**
 
-    Write-Host "Please refer to your Validation Analyst to verify if this computer requires Microsoft Office or not..."
+    Write-Host -ForegroundColor Yellow `n"Please refer to your Validation Analyst to verify if this computer requires Microsoft Office or not..."`n
          
 }catch{
 
@@ -240,7 +249,7 @@ try{
     $defrag = schtasks /Change /DISABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag"
     $defrag
 
-    Write-Host "The Following Action has Successfully Completed: ....Turned off Automated Defragmentation"
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Turned off Automated Defragmentation"`n
          
 }catch{
 
@@ -256,7 +265,7 @@ try{
     $stopSys = Stop-Service -Force -Name "SysMain" Set-Service -Name "SysMain" -StartupType Disabled
     $stopSys
     
-    Write-Host "The Following Action has Successfully Completed: ....Disabled SuperFetch or SysMain service"
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Disabled SuperFetch or SysMain service"`n
          
 }catch{
 
@@ -275,7 +284,7 @@ try{
 
     w32tm /query /status
     
-    Write-Host "The Following Action has Successfully Completed: ....Verified that 'Windows Time' Service is turned on and is running."
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Verified that 'Windows Time' Service is turned on and is running."`n
          
 }catch{
 
@@ -307,7 +316,7 @@ Start-Sleep -s 4
 
     if(GET-W32TMStatus(w32tm /query /status) -eq $true){
         
-        Write-Host "W32TM Source Name Verified... Moving On... Verified that the Windows Time is syncing correctly."`n
+        Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....W32TM Source Name Verified... Moving On... Verified that the Windows Time is syncing correctly."`n
     
     }else{
     
@@ -344,7 +353,7 @@ Start-Sleep -s 4
  
     Sched-Cleanup(Get-ScheduledTask)
 
-    Write-Host "The Following Action has Successfully Completed: ....Removed Windows tasks that are not needed"
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Removed Windows tasks that are not needed"`n
 
 }catch{
 
@@ -360,7 +369,7 @@ try{
 
     Set-NetFirewallProfile -Enabled False
 
-    Write-Host "The Following Action has Successfully Completed: ....Turned off Windows Firewall"
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Turned off Windows Firewall"`n
 
 }catch{
 
@@ -383,6 +392,8 @@ try{
 
         Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice' -Name ProgId -Value 'IE-HTTP'
 }
+    
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Internet Explorer has been set as the default browser."`n
 
 }catch{
 
@@ -407,11 +418,11 @@ try{
     New-ItemProperty . -Name https -Value 2 -Type DWORD
 
     #Create a new folder with the website name
-
-    Write-Host "The Following Action has Successfully Completed: ....Added https://*.ppdi.local to trusted sites"
     
     Write-Host "Trusted-Site added Successfully"
     Start-Sleep -s 2
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Added https://*.ppdi.local to trusted sites"`n
+    
 
 }catch{
 
@@ -443,7 +454,7 @@ try{
 
     }
 
-    Write-Host "The Following Action has Successfully Completed: ....Verified that devices in Device Manager are functional"
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Verified that devices in Device Manager are functional"`n
 
 }catch{
 
@@ -480,7 +491,7 @@ try{
 } 
     Set-CimInstance -Query 'SELECT * FROM MSPower_DeviceEnable WHERE InstanceName LIKE "USB\\%"' -Namespace root/WMI -Property @{Enable = $false}
 
-    Write-Host "The Following Action has Successfully Completed: ....Turned off power management of NICs and USB ports"
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Turned off power management of NICs and USB ports"`n
 
 
 }catch{
@@ -498,7 +509,7 @@ try{
     POWERCFG /HIBERNATE OFF
     POWERCFG -duplicatescheme 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
 
-    Write-Host "The Following Action has Successfully Completed: ....Hibernate is turned off and computer is set to High Performance power settings"
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Hibernate is turned off and computer is set to High Performance power settings"`n
 
 }catch{
 
@@ -513,7 +524,7 @@ try{
     #32
 
     Disable-WindowsErrorReporting
-
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Windows Troubleshooting has been disabled."`n
 }catch{ 
 
     Throw "A fatal error has occurred.[ --Could not disable troubleshooting.-- ]" 
@@ -528,7 +539,7 @@ try{
 
     C:\Windows\System32\cmd.exe /k %windir%\System32\reg.exe ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f
 
-    Write-Host "The Following Action has Successfully Completed: ....Turned off User Account Control Settings"
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Turned off User Account Control Settings"`n
 
 }catch{
 
@@ -554,6 +565,8 @@ try{
     
     }
 
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Bluetooth and WiFi have been disabled."`n
+
 
 }catch{ 
 
@@ -571,6 +584,8 @@ try{
     New-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -PropertyType "DWord" -Value 1
     New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -PropertyType "DWord" -Value 0
 
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Notifications have been disabled."`n
+
 }catch{ 
 
     Throw "A fatal error has occurred.[ --Could not disable notifications.-- #35 ]" 
@@ -587,7 +602,7 @@ try{
     $pageFile.AutomaticManagedPagefile = $true #SET TO $FALSE TO DISABLE automatic swap file management
     $pageFile.put() | Out-Null
 
-    Write-Host "The Following Action has Successfully Completed: ....Automatic Swap File Management has been Enabled"
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Automatic Swap File Management has been Enabled"`n
     
 }catch{
 
@@ -603,7 +618,7 @@ try{
     $disableIndex.IndexingEnabled = $false
     $disableIndex.Put()
 
-    Write-Host "The Following Action has Successfully Completed: '....Allow Indexing Service to index this disk for fast file searching' has been turned off for all hard drives."
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: '....Allow Indexing Service to index this disk for fast file searching' has been turned off for all hard drives."`n
     
 }catch{
 
@@ -617,7 +632,7 @@ try{
 
     #38
 
-    Write-Host "This step will be skipped in this script due to the rarity of its use."
+    Write-Host -ForegroundColor Yellow `n"This step will be skipped in this script due to the rarity of its use."`n
     
 }catch{ 
 
@@ -647,6 +662,8 @@ try{
 
         if($item -notlike "*Recycling Bin*" -or $item -notlike "*Adobe Reader*"){Remove-Item C:\Users\$env:UserName\Desktop\$item}
 
+        Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....All Desktop items excluding Adobe Reader & Recycling Bin have been removed."`n
+
 }
     #___________________________________________________________________________________________________________________________________
     
@@ -663,7 +680,7 @@ try{
         }
     
     }
-    
+        Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....All Taskbar items excluding File Explorer & Task View have been removed."`n
 
     #___________________________________________________________________________________________________________________________________
     
@@ -675,6 +692,8 @@ try{
     %{ $_.Verbs() } |
     ?{$_.Name -match 'Un.*pin from Start'} |
     %{$_.DoIt()}
+
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....All Start Menu items have been removed."`n
 
 }catch{ 
 
@@ -699,7 +718,8 @@ try{
     #41
 
     msfeedssync disable
-    Write-Host "Msfeedssync.exe has been disabled."
+    
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Msfeedssync.exe has been disabled."`n
 
 }catch{ 
 
@@ -711,7 +731,7 @@ try{
 
     #42
 
-    Write-Host "This step is not included in this program due to the rarity of its use."
+    Write-Host -ForegroundColor Yellow `n"This step is not included in this program due to the rarity of its use."`n
 
 
 }catch{ 
@@ -734,7 +754,7 @@ try{
 
     #44/#45
 
-    Write-Host "Please wait 24 hours for this PC to update.Then perform a Windows search for 'Check for updates'. Apply updates until computer says it's up to date... Restarting now..." 
+    Write-Host -ForegroundColor Magenta `n"Please wait 24 hours for this PC to update.Then perform a Windows search for 'Check for updates'. Apply updates until computer says it's up to date... Restarting now..."`n 
     shutdown -r
 
 }catch{ 
