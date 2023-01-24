@@ -30,6 +30,7 @@ try{
 }catch{
     
         Throw "A fatal error has occurred. [ --Could NOT confirm that the current user is a member of the Administrators group. Exiting program now...-- #0 ]" 
+        $ErrorActionPreference = "Stop"
          
 }
 
@@ -230,7 +231,7 @@ try{
          
 }catch{
 
-    Throw "A fatal error has occurred.[ --Unknown Error.-- #19 ]"
+    Throw "A fatal error has occurred.[ --Unknown Error.-- #20 ]"
 }
 
 Start-Sleep -s 6
@@ -417,7 +418,7 @@ try{
     Set-Location ppdi.local
     New-ItemProperty . -Name https -Value 2 -Type DWORD
 
-    #Create a new folder with the website name
+    #Create a new folder with the trusted website name
     
     Write-Host "Trusted-Site added Successfully"
     Start-Sleep -s 2
@@ -466,19 +467,18 @@ Start-Sleep -s 4
 try{
     #30 **Needs testing at physical PC!**
 
-    <#Get-PnpDevice |
-    Where-Object { $_.FriendlyName -match 'USB Enhanced Host Controller' } |
-    Where-Object { $_.Status -ne 'OK' } |
-    ForEach-Object {
-        $_ | Disable-PnpDevice -Confirm:$false
-        $_ | Enable-PnpDevice -Confirm:$false
-    }
-
-    #****_________________________
-
-    #this is working below
-    (Get-PnpDevice).Friendlyname -like "*host*"
-    #>
+   $hubs = Get-WmiObject Win32_Serialport | Select-Object Name,DeviceID,Description
+   $powerMgmt = Get-WmiObject MSPower_DeviceEnable -Namespace root\wmi
+   foreach ($powerItem in $powerMgmt){
+     $IN = $powerItem.InstanceName.ToUpper()
+     foreach ($hub in $hubs){
+        $PNPDI = $hub.PNPDeviceID
+        if ($IN -like "*$PNPDI*"){
+            $powerItem.enable = $False
+            $powerItem.psbase.put()
+                }
+ }
+}
 
     $adapters = Get-NetAdapter | Get-NetAdapterPowerManagement
 
