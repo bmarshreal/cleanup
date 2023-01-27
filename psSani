@@ -15,7 +15,7 @@ $currentDomainandUser = "$($env:UserDomain)\$($env:UserName)" #Gets current user
 
 try{
     
-    #0 **Needs Testing with labs.ppdi.local access**
+    #0 **Passed Test**
 
      if($currentDomainandUser -in $admins.Name){
     
@@ -38,7 +38,7 @@ Start-Sleep -s 6
 
 try{
 
-    #9 **Needs Testing with labs.ppdi.local access**
+    #9 **Passed Test**
 
     "tzutil /s 'Central Standard Time'"
 
@@ -103,7 +103,7 @@ Start-Sleep -s 6
 
 try{
 
-    #15 **Needs Testing with labs.ppdi.local access**
+    #15 *Passed Test*
 
     $keyOneCount = (Get-ChildItem -path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate").ValueCount
     $keyTwoCount = (Get-ChildItem -path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU").ValueCount
@@ -154,7 +154,7 @@ Start-Sleep -s 6
 
 try{
 
-    #16 **Needs Testing with labs.ppdi.local access**
+    #16 *Passed Test*
 
     $programsList = (Get-WmiObject -Class Win32_Product).Name
 
@@ -196,7 +196,7 @@ Start-Sleep -s 6
 
 try{
 
-    #18 **Needs Testing with labs.ppdi.local access**
+    #18 
 
     Write-Host -ForegroundColor Yellow `n"Moving on... Please wait..."`n
          
@@ -225,7 +225,7 @@ Start-Sleep -s 6
 
 try{
 
-    #20 **Needs Testing with labs.ppdi.local access**
+    #20 
 
     Write-Host -ForegroundColor Yellow `n"Please refer to your Validation Analyst to verify if this computer requires Microsoft Office or not..."`n
          
@@ -245,7 +245,7 @@ Start-Sleep -s 6
 
 try{
 
-    #21
+    #21*Passed Test*
 
     $defrag = schtasks /Change /DISABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag"
     $defrag
@@ -261,7 +261,7 @@ Start-Sleep -s 4
 
 try{
     
-    #22
+    #22*Passed Test*
 
     $stopSys = Stop-Service -Force -Name "SysMain" Set-Service -Name "SysMain" -StartupType Disabled
     $stopSys
@@ -277,7 +277,7 @@ Start-Sleep -s 4
 
 try{
     
-    #23
+    #23*Passed Test*
 
     Set-Service -Name "W32Time" -Status Running -StartupType Automatic
 
@@ -313,7 +313,7 @@ Start-Sleep -s 4
  
  try{
 
-    #24 **NEEDS TO BE CHANGED TO  "MADDC01 or MADDC02" IN FINAL VERSION!!!***
+    #24 *Needs Further Testing* TO BE CHANGED TO  "MADDC01 or MADDC02" IN FINAL VERSION!!!***
 
     if(GET-W32TMStatus(w32tm /query /status) -eq $true){
         
@@ -350,7 +350,7 @@ Start-Sleep -s 4
 
  try{
 
-    #25
+    #25*Passed Test*
  
     Sched-Cleanup(Get-ScheduledTask)
 
@@ -366,7 +366,7 @@ Start-Sleep -s 4
 
 try{
 
-    #26
+    #26*Passed Test*
 
     Set-NetFirewallProfile -Enabled False
 
@@ -382,7 +382,7 @@ Start-Sleep -s 4
 
 try{
 
-    #27
+    #27*Passed Test*
 
     $defaultBrowserKeyHTTPS = (Get-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -Name ProgId).ProgId 
     $defaultBrowserKeyHTTP = (Get-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice' -Name ProgId).ProgId 
@@ -406,7 +406,7 @@ Start-Sleep -s 4
 
 try{
 
-    #28
+    #28*Passed Test*
 
     #Navigate to the domains folder in the registry
 
@@ -447,7 +447,7 @@ Start-Sleep -s 4
 
 try{
 
-    #29 currently working on this.... **Needs testing at physical PC!**
+    #29 *Passed Test*
 
     foreach($item in Get-PnpDevice){
     
@@ -465,7 +465,7 @@ try{
 Start-Sleep -s 4
 
 try{
-    #30 **Needs testing at physical PC!**
+    #30 **Passed Test**
 
    $hubs = Get-WmiObject Win32_Serialport | Select-Object Name,DeviceID,Description
    $powerMgmt = Get-WmiObject MSPower_DeviceEnable -Namespace root\wmi
@@ -504,7 +504,7 @@ Start-Sleep -s 4
 
 try{
 
-    #31 **Needs testing at physical PC!**
+    #31 **Passed Test**
 
     POWERCFG /HIBERNATE OFF
     POWERCFG -duplicatescheme 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
@@ -521,7 +521,7 @@ Start-Sleep -s 4
 
 try{
 
-    #32
+    #32*Passed Test*
 
     Disable-WindowsErrorReporting
     Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Windows Troubleshooting has been disabled."`n
@@ -535,7 +535,7 @@ Start-Sleep -s 4
 
 try{
 
-    #33, Must be run in admin shell **Needs testing at physical PC!**
+    #33,*Passed Test* Must be run in admin shell **
 
     C:\Windows\System32\cmd.exe /k %windir%\System32\reg.exe ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f
 
@@ -551,7 +551,7 @@ Start-Sleep -s 4
 
 try{
 
-    #34 **Needs testing at physical PC!**
+    #34 **Passed Test**Needs testing at physical PC!**
 
     $netAdapterList = Get-NetAdapter | Format-List
 
@@ -578,7 +578,7 @@ Start-Sleep -s 4
 
 try{
 
-    #35
+    #35*Passed Test*
 
     New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows" -Name "Explorer" -force
     New-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -PropertyType "DWord" -Value 1
@@ -596,7 +596,7 @@ Start-Sleep -s 4
 
 try{
 
-    #36
+    #36*Passed Test*
 
     $pageFile = Get-WmiObject Win32_ComputerSystem -EnableAllPrivileges
     $pageFile.AutomaticManagedPagefile = $true #SET TO $FALSE TO DISABLE automatic swap file management
@@ -612,7 +612,7 @@ try{
 Start-Sleep -s 4
 
 try{
-    #37
+    #37*Passed Test*
 
     $disableIndex = Get-WmiObject -Class Win32_Volume -Filter "DriveLetter='C:'"
     $disableIndex.IndexingEnabled = $false
@@ -630,7 +630,7 @@ Start-Sleep -s 4
 
 try{
 
-    #38
+    #38*Passed Test*
 
     Write-Host -ForegroundColor Yellow `n"This step will be skipped in this script due to the rarity of its use."`n
     
@@ -652,7 +652,7 @@ Start-Sleep -s 4
 
 try{
 
-    #39
+    #39*Passed Test*
 
     #Remove all shortcuts from the desktop
 
@@ -715,7 +715,7 @@ try{
 
 try{
 
-    #41
+    #41*Passed Test*
 
     msfeedssync disable
     
