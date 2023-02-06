@@ -41,7 +41,7 @@ try{
     #12 
 
 
-    Write-Host -ForegroundColor Yellow `n"This action will be implemented in the final version of the script at a later date."`n
+    Write-Host -ForegroundColor Yellow `n"Skipping this step...This action will be implemented in the final version of the script at a later date."`n
          
 }catch{
 
