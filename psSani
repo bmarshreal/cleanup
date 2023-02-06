@@ -46,7 +46,52 @@ try{
          
 }catch{
 
-    Throw "A fatal error has occurred.[ --Could not update Time Zone settings.-- #20 ]"
+    Throw "A fatal error has occurred.[ --Could not update Time Zone settings.-- #9 ]"
+
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #10
+
+
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ... ."`n
+         
+}catch{
+
+    Throw "A fatal error has occurred.[ --.-- #10 ]"
+
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #11
+
+
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ..."`n
+         
+}catch{
+
+    Throw "A fatal error has occurred.[ --.-- #11 ]"
+
+}
+
+Start-Sleep -s 6
+
+try{
+
+    #12 
+
+
+    Write-Host -ForegroundColor Yellow `n"This action will be implemented in the final version of the script at a later date."`n
+         
+}catch{
+
+    Throw "A fatal error has occurred.[ --.-- #12 ]"
 
 }
 
@@ -527,7 +572,7 @@ try{
     Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Windows Troubleshooting has been disabled."`n
 }catch{ 
 
-    Throw "A fatal error has occurred.[ --Could not disable troubleshooting.-- ]" 
+    Throw "A fatal error has occurred.[ --Could not disable troubleshooting.-- #32 ]" 
     
 }
 
@@ -759,7 +804,7 @@ try{
 
 }catch{ 
 
-    Throw "A fatal error has occurred.[ --This PC could not be shutdown/restarted. Uknown Error.-- #44 ]" 
+    Throw "A fatal error has occurred.[ --This PC could not be shutdown/restarted. Uknown Error.-- #44/#45 ]" 
     
 }
 
