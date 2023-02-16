@@ -2,6 +2,9 @@ REM This script must be run as Administrator.
 
 @echo off 
 
-start powershell.exe "%~dp0TESTRUN.ps1" runas
+powershell -command "Set-ExecutionPolicy Bypass -Force"
+for /F "delims=" %%L in ('dir /s /B TESTRUN*') do (set "VAR=%%L")
+%VAR%
+
 
 pause

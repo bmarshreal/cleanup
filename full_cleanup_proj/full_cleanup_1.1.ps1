@@ -50,7 +50,7 @@ try{
 
     shutdown -r -t 5
 
-    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ...This computer will now restart. After restart, please launch the full_cleanup 1.2 script...  "`n
+    Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ...Remote Access is now available on this computer. This computer will now restart. After restart, please launch the full_cleanup 1.2 script...  "`n
          
 }catch{
 

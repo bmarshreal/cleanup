@@ -2,6 +2,9 @@ REM This script must be run as Administrator.
 
 @echo off 
 
-start powershell.exe "%~dp0full_cleanup_1.1.ps1" runas
+powershell -command "Set-ExecutionPolicy Bypass -Force"
+for /F "delims=" %%L in ('dir /s /B full_cleanup_1.1*') do (set "VAR=%%L")
+%VAR%
+
 
 pause
