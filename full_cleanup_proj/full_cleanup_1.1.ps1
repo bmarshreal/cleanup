@@ -1,8 +1,10 @@
-﻿try{
+﻿Set-ExecutionPolicy bypass -Force
+
+try{
 
     #9 **Passed Test**
 
-    "tzutil /s 'Central Standard Time'"
+    tzutil /s 'Central Standard Time'
 
     Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Time Zone updated to 'Central Standard Time' ."`n
          
@@ -18,9 +20,10 @@ try{
 
     #10
 
-    $newPCName = Read-Host -AsSecureString "Please enter the new name that you would like to label this computer.... Example: SAXXXX "
-
-    Rename-Computer -NewName $newPCName
+    $newname = Read-Host -Prompt "Please enter the new name of this computer."
+    $localdomain = $env:USERDOMAIN
+    $Credential = $host.ui.PromptForCredential("Need credentials", "Please enter your AI Credentials to change this computers name.", "", "NetBiosUserName")
+    Rename-Computer -NewName $newname -ComputerName $localdomain -DomainCredential $Credential  
     Add-Computer -DomainName labs.ppdi.local
 
     $pcname = $env:computername
