@@ -16,6 +16,20 @@ $currentDomainandUser = "$($env:UserDomain)\$($env:UserName)" #Gets current user
 
 
 try{
+
+    #11 **Passed PROD Test**
+
+    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0 -Force
+    Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+         
+}catch{
+
+    Throw "A fatal error has occurred.[ --Could not enable Remote Desktop Portal.-- #11 ]"
+
+}
+
+
+try{
     
     #0 **Passed PROD Test**
 
@@ -135,14 +149,48 @@ Start-Sleep -s 6
 try{
 
     #15 *Passed Test*
+    $keyZero = "HKLM:\SOFTWARE\Policies\Microsoft\Windows"
     $keyOne = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
     $keyTwo = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
     $keyOneCount = (Get-Item -path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate").ValueCount
     $keyTwoCount = (Get-ChildItem -recurse "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate").ValueCount
 
+    Get-ChildItem -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows"
+    $reg = (Get-ChildItem -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows").Name
+
+    function existingKey($arg){
+
+    if($arg.Contains('WindowsUpdate') -eq $true){
+    
+        Write-Host "Found WindowsUpdate Key!!"
+        return $true
+        
+    }elseif($arg.Contains('WindowsUpdate') -eq $false){
+    
+        Write-Host "N/A"
+        New-Item -Path $keyZero -Name "WindowsUpdate" -ErrorAction SilentlyContinue
+        
+   }    
+
+
+}
+    
+foreach($item in $reg){
+
+    $findKey = existingKey($item)
+}
+
+if(existingKey('WindowsUpdate') -eq $true){
+        
+        New-Item -Path $keyOne -Name "AU"
+}
+    
+
     if($keyOneCount -le 4 -or $keyTwoCount -le 4){
 
         Write-Host -ForegroundColor Yellow `n"The Following Action is in Progress: ....Registry Keys and values COULD NOT be verified, they will now be configured."`n
+
+        Start-Sleep -s 3
 
         Write-Host -ForegroundColor Yellow `n"This could take a few minutes... Please wait."`n
 
@@ -171,6 +219,7 @@ try{
 
         )
 
+
     
         foreach($item1 in $tupleList1){
         
@@ -184,13 +233,9 @@ try{
 
         }
 
-
+        Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Registry Keys, Values and Paths have been configured and verified."`n
     
-    }else{
-    
-        Write-Host -ForegroundColor Green `n"The Following Action has Successfully Completed: ....Registry Keys and values have been verified."`n
-    
-    }
+ }
     
 
 

@@ -258,6 +258,7 @@ try{
 
     #44/#45
 
+    Write-Host -ForegroundColor Cyan `n"PLEASE DELETE THE NEWLY ADDED 'Y:' DRIVE BEFORE LOGGING OFF IF IT WASNT REMOVED AUTOMATICALLY."`n
     Write-Host -ForegroundColor Magenta `n"Please wait 24 hours for this PC to update.Then perform a Windows search for 'Check for updates'. Apply updates until computer says it's up to date..."`n 
     
 

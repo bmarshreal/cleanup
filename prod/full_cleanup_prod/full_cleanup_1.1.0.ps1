@@ -24,24 +24,30 @@ try{
 
     if($initprompt -eq "C"){
 
-    $newname = Read-Host -Prompt "Please enter the new name of this computer."
-    $localdomain = $env:USERDOMAIN
-    $Credential = $host.ui.PromptForCredential("Need credentials", "Please enter your AI Credentials in the following prompt(s) to change this computers name.", "", "NetBiosUserName")
-    Rename-Computer -NewName $newname -ComputerName $localdomain -DomainCredential $Credential  
-    Add-Computer -DomainName labs.ppdi.local
+        $DomainCredential = $host.ui.PromptForCredential("Need credentials", "Please enter your AI Credentials in the following prompt(s) to join this computer to the network domain.", "", "NetBiosUserName")
+        
+        Add-Computer -DomainName labs.ppdi.local -Credential $DomainCredential
 
-    $pcname = $env:computername
-    $hostmessage = (-join("The Following Action has Successfully Completed: ... The computer has been renamed to ",$pcname,"."))
+        $hostmessage = (-join("The Following Action has Successfully Completed: ... The computer has joined the domain. Moving on..."))
 
-    Write-Host -ForegroundColor Yellow `n"DO NOT RESTART THIS COMPUTER YET! PLEASE IGNORE ALL "RESTART NOW" PROMPTS.`n WHEN THE SCRIPT HAS FINISHED, IT WILL RESTART THIS COMPUTER."`n
+        Write-Host -ForegroundColor Green `n $hostmessage`n
 
-    Write-Host -ForegroundColor Green `n $hostmessage`n
+        Start-Sleep -s 3
+
+        $newname = Read-Host -Prompt "Please enter the new name of this computer."
+
+        Rename-Computer -NewName $newname -DomainCredential $DomainCredential -Force
+
+        $hostmessage = (-join("The Following Action has Successfully Completed: ... The computer will be renamed to ",$newname,"."))
+
+        Write-Host -ForegroundColor Green `n $hostmessage`n
+
+        
 
     }elseif($initprompt -eq "T"){
     
         Write-Host -ForegroundColor Red `n"You have chosen to skip this step for testing purposes. Moving on..."`n
 
-    
     }
          
 }catch{
@@ -52,14 +58,7 @@ try{
 
 Start-Sleep -s 6
 
-try{
-
-    #11 **Passed PROD Test**
-
-    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0 -Force
-    Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-
-    $optional_restart = Read-Host `n"This is an optional restart point. Type the word "yes" to restart now, otherwise type the word "no" to continue."`n
+    $optional_restart = Read-Host `n"This is an optional restart point. Type the word "yes" to restart now, otherwise type the word "no" to continue..."`n
 
     if($optional_restart -eq "yes"){
         
@@ -68,15 +67,9 @@ try{
     
     }else{
     
-        Write-Host -ForegroundColor Green `n"You have chosen not the restart the computer at this point. Moving on..."`n
+        Write-Host -ForegroundColor Green `n"You have chosen not the restart the computer at this point. Please continue with the Sanitization process..."`n
 
     }
     
-         
-}catch{
-
-    Throw "A fatal error has occurred.[ --Could not enable Remote Desktop Portal.-- #11 ]"
-
-}
 
 Start-Sleep -s 6
